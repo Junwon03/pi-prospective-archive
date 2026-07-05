@@ -1,0 +1,2 @@
+This archive has produced at least one successful snapshot.
+After this marker is committed, healthcheck must fail if snapshots disappear.
