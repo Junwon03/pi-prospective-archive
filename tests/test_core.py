@@ -43,8 +43,14 @@ def make_raw(seed: int = 7) -> dict:
     # sensitivity용 DGS3MO — DTB3와 유사하되 basis 차이
     gs = tb + 0.06 + rng.normal(0, 0.01, len(bdays))
 
-    return {"DFF": dff, "DCPF3M": cp, "DTB3": tb, "TOTBKCR": tot,
-            "TEDRATE": ted, "DGS3MO": gs}
+    return {
+        "DFF": dff,
+        "DCPF3M": cp,
+        "DTB3": tb,
+        "TOTBKCR": tot,
+        "TEDRATE": ted,
+        "DGS3MO": gs,
+    }
 
 
 # ------------------------------------------------- ★ 핵심: 인과성 불변량
@@ -79,7 +85,8 @@ def test_interpolation_is_noncausal():
     → live 금지 근거 (v3 수정 사유의 코드 증거).
 
     같은 데이터에서: live(LOCF)는 두 주간 관측 사이 날짜에 '직전 관측값'을 주고
-    (과거만 사용), 보간은 직전 값과 다른 값을 준다 = 다음(미래) 관측이 개입."""
+    (과거만 사용), 보간은 직전 값과 다른 값을 준다 = 다음(미래) 관측이 개입.
+    """
     raw_full = make_raw()
     full_live = ch.build_credit_channels(raw_full, mode="live")
     full_interp = ch.build_credit_channels(raw_full, mode="historical_repro")
@@ -152,8 +159,11 @@ def test_sep_pi_known_ratio():
     s = pd.Series(1.0, index=idx)
     s.loc["2020-07-01":"2020-09-30"] = 5.0
     df = pd.DataFrame({"S": s})
-    res = stress.sep_pi(df, crisis=("2020-07-01", "2020-09-30"),
-                        control=("2020-02-01", "2020-04-30"))
+    res = stress.sep_pi(
+        df,
+        crisis=("2020-07-01", "2020-09-30"),
+        control=("2020-02-01", "2020-04-30"),
+    )
     assert res["Sep_Sbar"] == pytest.approx(5.0)
     expected_pi_ratio = 5.0 * res["N_crisis"] / res["N_control"]
     assert res["Sep_Pi"] == pytest.approx(expected_pi_ratio)
@@ -193,19 +203,39 @@ def test_episode_yellow_only_never_opens():
 
 # ------------------------------------------------------ 사전등록 강제 (SPEC §5.1)
 
-def test_calibration_refuses_unregistered_windows():
-    """window 미등록 사건(COVID_2020 등) 실행 시도 → 거부되어야 함."""
+def test_calibration_refuses_unregistered_windows(monkeypatch):
+    """window 미등록 사건 실행 시도 → 거부되어야 함.
+
+    실제 C-US v1 calibration events는 calibration_plan.md 이후 모두 등록되어야 하므로,
+    이 테스트는 임시 dummy event를 주입해 사전등록 guard 자체를 검증한다.
+    """
     raw = make_raw()
+    events = dict(config.CALIBRATION_EVENTS)
+    events["UNREGISTERED_DUMMY"] = {
+        "kind": "positive",
+        "stable": None,
+        "control": None,
+        "crisis": None,
+        "modes": ["live"],
+    }
+    monkeypatch.setattr(config, "CALIBRATION_EVENTS", events)
+
     with pytest.raises(RuntimeError, match="pre-registered"):
-        calibration.run_event(raw, "COVID_2020", mode="live")
+        calibration.run_event(raw, "UNREGISTERED_DUMMY", mode="live")
 
 
 def test_calibration_runs_registered_event():
     """window 고정된 GFC_2008은 실행되고 raw 지표 전량이 산출된다."""
     raw = make_raw()
     res = calibration.run_event(raw, "GFC_2008", mode="live")
-    for key in ("Sep_Pi", "Sep_Sbar", "stable_max_abs_corr",
-                "n_red_episodes", "missingness", "p99_event_specific"):
+    for key in (
+        "Sep_Pi",
+        "Sep_Sbar",
+        "stable_max_abs_corr",
+        "n_red_episodes",
+        "missingness",
+        "p99_event_specific",
+    ):
         assert key in res
     assert res["Sep_Pi"] > 0
     # 합성 데이터에 위기 bump를 넣었으므로 분리가 나와야 정상
@@ -216,7 +246,8 @@ def test_calibration_runs_registered_event():
 
 def test_historical_repro_uses_tedrate():
     """SPEC §1.2: historical 조합 = DFF × TEDRATE × TOTBKCR.
-    repro 모드의 Ψ는 |Δ5|TEDRATE여야 하며 CP–T-bill과 달라야 한다."""
+    repro 모드의 Ψ는 |Δ5|TEDRATE여야 하며 CP–T-bill과 달라야 한다.
+    """
     raw = make_raw()
     repro = ch.build_credit_channels(raw, mode="historical_repro")
     live = ch.build_credit_channels(raw, mode="live")
@@ -226,8 +257,10 @@ def test_historical_repro_uses_tedrate():
     expected_psi = ted.diff(5).abs().dropna()
     common = repro.index.intersection(expected_psi.index)
     pd.testing.assert_series_equal(
-        repro.loc[common, "psi_raw"], expected_psi.loc[common],
-        check_names=False, check_exact=True,
+        repro.loc[common, "psi_raw"],
+        expected_psi.loc[common],
+        check_names=False,
+        check_exact=True,
     )
 
     # repro Ψ ≠ live Ψ (합성 TEDRATE와 CP–T-bill은 다른 시리즈)
@@ -256,30 +289,42 @@ def test_sensitivity_recorded_but_not_in_passfail():
     assert calibration.passfail([res2]) == base
 
 
-# ---------------------------------------------- writer / strict (GPT Pro 지적 해결)
+# ---------------------------------------------- writer / strict
 
 def _raw_dict_to_long(raw: dict) -> pd.DataFrame:
     rows = []
     for sid, s in raw.items():
         for d, v in s.items():
-            rows.append({"provider": "FRED", "series_id": sid,
-                         "observation_date": str(d.date()),
-                         "realtime_start": None, "realtime_end": None,
-                         "value": v, "unit": None, "fetch_status": "ok",
-                         "fetched_at_utc": "2026-08-15T00:05:00Z"})
+            rows.append(
+                {
+                    "provider": "FRED",
+                    "series_id": sid,
+                    "observation_date": str(d.date()),
+                    "realtime_start": None,
+                    "realtime_end": None,
+                    "value": v,
+                    "unit": None,
+                    "fetch_status": "ok",
+                    "fetched_at_utc": "2026-08-15T00:05:00Z",
+                }
+            )
     return pd.DataFrame(rows)
 
 
 def _spec_and_lock(tmp_path):
-    common = tmp_path / "SPEC-1.0_common.md"; common.write_text("common", encoding="utf-8")
-    sub = tmp_path / "SPEC-1.0-C-US.md"; sub.write_text("c-us", encoding="utf-8")
-    lock = tmp_path / "requirements.lock"; lock.write_text("pandas==3.0.2", encoding="utf-8")
+    common = tmp_path / "SPEC-1.0_common.md"
+    common.write_text("common", encoding="utf-8")
+    sub = tmp_path / "SPEC-1.0-C-US.md"
+    sub.write_text("c-us", encoding="utf-8")
+    lock = tmp_path / "requirements.lock"
+    lock.write_text("pandas==3.0.2", encoding="utf-8")
     return {"common": common, "subtrack": sub}, lock
 
 
 def test_snapshot_writer_roundtrip(tmp_path):
     """writer가 5개 파일 생성, manifest hash 검증 통과, unavailable 기록,
-    append-only 위반 시 거부."""
+    append-only 위반 시 거부.
+    """
     import datetime as dt
     from pi_archive import writer
 
@@ -294,10 +339,17 @@ def test_snapshot_writer_roundtrip(tmp_path):
     now = dt.datetime(2026, 8, 15, 0, 5, 0, tzinfo=dt.timezone.utc)
 
     run_dir = writer.write_snapshot(
-        raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-        base_dir=tmp_path / "snapshots", spec_paths=specs, p99=p99,
-        freeze_date="2006-01-02", lock_path=lock, now_utc=now,
-        snapshot_status="dry_run")  # freeze 이전 = dry_run 강제 (v5)
+        raw_long=_raw_dict_to_long(raw),
+        raw_series=raw,
+        subtrack="C-US",
+        base_dir=tmp_path / "snapshots",
+        spec_paths=specs,
+        p99=p99,
+        freeze_date="2006-01-02",
+        lock_path=lock,
+        now_utc=now,
+        snapshot_status="dry_run",
+    )
 
     for f in ("raw.csv", "computed.csv", "alert.json", "meta.json", "manifest.sha256"):
         assert (run_dir / f).exists()
@@ -308,6 +360,7 @@ def test_snapshot_writer_roundtrip(tmp_path):
     assert (comp["computed_status"] == "unavailable_fill_limit").any()  # gap 기록됨
     assert (comp["computed_status"] == "ok").sum() > 1000
     assert set(comp.columns) == set(writer.COMPUTED_COLUMNS)
+
     # raw에 snapshot_id/subtrack 포함 (common C11.2)
     rawcsv = pd.read_csv(run_dir / "raw.csv")
     assert {"snapshot_id", "subtrack"} <= set(rawcsv.columns)
@@ -315,16 +368,25 @@ def test_snapshot_writer_roundtrip(tmp_path):
     # append-only: 동일 run 재작성 거부
     with pytest.raises(FileExistsError):
         writer.write_snapshot(
-            raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-            base_dir=tmp_path / "snapshots", spec_paths=specs, p99=p99,
-            freeze_date="2006-01-02", lock_path=lock, now_utc=now,
-            snapshot_status="dry_run")
+            raw_long=_raw_dict_to_long(raw),
+            raw_series=raw,
+            subtrack="C-US",
+            base_dir=tmp_path / "snapshots",
+            spec_paths=specs,
+            p99=p99,
+            freeze_date="2006-01-02",
+            lock_path=lock,
+            now_utc=now,
+            snapshot_status="dry_run",
+        )
 
 
 def test_pi_since_freeze_invariant_to_history_start(tmp_path):
     """Π 적분 원점 고정 검증: fetch 시작점이 달라도(2004 vs 2005)
-    freeze일 이후 Pi_since_freeze 값은 동일해야 한다 (GPT Pro 지적 ③)."""
+    freeze일 이후 Pi_since_freeze 값은 동일해야 한다.
+    """
     from pi_archive import stress as st_mod
+
     raw_a = make_raw()
     raw_b = {k: s.loc["2005-01-01":] for k, s in raw_a.items()}
 
@@ -342,44 +404,79 @@ def test_pi_since_freeze_invariant_to_history_start(tmp_path):
     assert (pa.loc[common] - pb.loc[common]).abs().max() < 1e-12
 
 
-def test_strict_mode_fails_on_todo_windows():
-    """freeze-prep strict: 미등록 window(COVID_2020 등) 존재 시 실패."""
-    assert "COVID_2020" in calibration.unregistered_events()
+def test_strict_mode_fails_on_todo_windows(monkeypatch):
+    """freeze-prep strict: TODO window가 하나라도 있으면 실패."""
+    events = dict(config.CALIBRATION_EVENTS)
+    events["UNREGISTERED_DUMMY"] = {
+        "kind": "negative",
+        "stable": ("2014-01-01", "2016-12-31"),
+        "control": None,
+        "crisis": ("2017-01-01", "2017-12-31"),
+        "modes": ["live"],
+    }
+    monkeypatch.setattr(config, "CALIBRATION_EVENTS", events)
+
+    assert "UNREGISTERED_DUMMY" in calibration.unregistered_events()
     with pytest.raises(RuntimeError, match="unregistered"):
         calibration.assert_all_windows_registered()
+
+
+def test_registered_calibration_events_match_plan():
+    """calibration_plan.md v1 반영 후 canonical C-US events는 모두 등록되어 있어야 함."""
+    assert calibration.unregistered_events() == []
+    assert {
+        "GFC_2008",
+        "CREDIT_SHOCK_2020",
+        "SVB_2023",
+        "REPO_2019",
+        "QUIET_2017",
+    } <= set(config.CALIBRATION_EVENTS)
 
 
 def test_correction_reason_controlled_vocabulary(tmp_path):
     """common C10.3: correction_reason은 통제 어휘 외 거부."""
     import datetime as dt
     from pi_archive import writer
+
     raw = make_raw()
     specs, lock = _spec_and_lock(tmp_path)
     with pytest.raises(ValueError, match="controlled vocabulary"):
         writer.write_snapshot(
-            raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-            base_dir=tmp_path / "snapshots", spec_paths=specs,
+            raw_long=_raw_dict_to_long(raw),
+            raw_series=raw,
+            subtrack="C-US",
+            base_dir=tmp_path / "snapshots",
+            spec_paths=specs,
             p99={"rho": 0.05, "psi": 0.10, "omega": 8500.0},
-            freeze_date="2006-01-02", lock_path=lock,
-            snapshot_status="correction", correction_reason="I_FELT_LIKE_IT",
-            now_utc=dt.datetime(2026, 8, 15, 3, 12, 0, tzinfo=dt.timezone.utc))
+            freeze_date="2006-01-02",
+            lock_path=lock,
+            snapshot_status="correction",
+            correction_reason="I_FELT_LIKE_IT",
+            now_utc=dt.datetime(2026, 8, 15, 3, 12, 0, tzinfo=dt.timezone.utc),
+        )
 
 
 # ----------------------------------------- simplicity pass (v5) 검증
 
 def test_verify_fails_on_missing_manifest_entry(tmp_path):
-    """★버그픽스 검증: manifest에 존재하지 않는 파일 항목 → verify 실패.
-    (이전 버전은 누락 파일을 건너뛰어 True를 반환했음 — GPT Pro 캐치)"""
+    """manifest에 존재하지 않는 파일 항목 → verify 실패."""
     import datetime as dt
     from pi_archive import writer
+
     raw = make_raw()
     specs, lock = _spec_and_lock(tmp_path)
     run_dir = writer.write_snapshot(
-        raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-        base_dir=tmp_path / "snapshots", spec_paths=specs,
+        raw_long=_raw_dict_to_long(raw),
+        raw_series=raw,
+        subtrack="C-US",
+        base_dir=tmp_path / "snapshots",
+        spec_paths=specs,
         p99={"rho": 0.05, "psi": 0.10, "omega": 8500.0},
-        freeze_date="2006-01-02", lock_path=lock, snapshot_status="dry_run",
-        now_utc=dt.datetime(2026, 8, 16, 0, 5, 0, tzinfo=dt.timezone.utc))
+        freeze_date="2006-01-02",
+        lock_path=lock,
+        snapshot_status="dry_run",
+        now_utc=dt.datetime(2026, 8, 16, 0, 5, 0, tzinfo=dt.timezone.utc),
+    )
     assert writer.verify_snapshot(run_dir)
     with open(run_dir / "manifest.sha256", "a", encoding="utf-8") as f:
         f.write("deadbeef" * 8 + "  missing.txt\n")
@@ -388,19 +485,30 @@ def test_verify_fails_on_missing_manifest_entry(tmp_path):
 
 def test_manifest_covers_only_local_files(tmp_path):
     """simplicity: manifest는 run 폴더 내 4파일만. SPEC/lock은 meta 담당."""
-    import datetime as dt, json
+    import datetime as dt
+    import json
     from pi_archive import writer
+
     raw = make_raw()
     specs, lock = _spec_and_lock(tmp_path)
     run_dir = writer.write_snapshot(
-        raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-        base_dir=tmp_path / "snapshots", spec_paths=specs,
+        raw_long=_raw_dict_to_long(raw),
+        raw_series=raw,
+        subtrack="C-US",
+        base_dir=tmp_path / "snapshots",
+        spec_paths=specs,
         p99={"rho": 0.05, "psi": 0.10, "omega": 8500.0},
-        freeze_date="2006-01-02", lock_path=lock, snapshot_status="dry_run",
-        now_utc=dt.datetime(2026, 8, 17, 0, 5, 0, tzinfo=dt.timezone.utc))
-    names = [l.split(None, 1)[1].strip() for l in
-             (run_dir / "manifest.sha256").read_text().strip().splitlines()]
+        freeze_date="2006-01-02",
+        lock_path=lock,
+        snapshot_status="dry_run",
+        now_utc=dt.datetime(2026, 8, 17, 0, 5, 0, tzinfo=dt.timezone.utc),
+    )
+    names = [
+        l.split(None, 1)[1].strip()
+        for l in (run_dir / "manifest.sha256").read_text().strip().splitlines()
+    ]
     assert sorted(names) == ["alert.json", "computed.csv", "meta.json", "raw.csv"]
+
     meta = json.loads((run_dir / "meta.json").read_text())
     # SPEC/환경/계산상수는 meta에 박제
     assert meta["spec_common_sha256"] and meta["spec_subtrack_sha256"]
@@ -412,28 +520,43 @@ def test_manifest_covers_only_local_files(tmp_path):
 
 def test_official_snapshot_requires_frozen_constants(tmp_path):
     """freeze 이전(mu_sigma 없음)에 status=valid → 거부.
-    frozen 상수 미설정 상태에서 공식 snapshot → 거부."""
+    frozen 상수 미설정 상태에서 공식 snapshot → 거부.
+    """
     import datetime as dt
     from pi_archive import writer
+
     raw = make_raw()
     specs, lock = _spec_and_lock(tmp_path)
-    kw = dict(raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-              base_dir=tmp_path / "snapshots", spec_paths=specs,
-              p99={"rho": 0.05, "psi": 0.10, "omega": 8500.0},
-              freeze_date="2006-01-02", lock_path=lock,
-              now_utc=dt.datetime(2026, 8, 18, 0, 5, 0, tzinfo=dt.timezone.utc))
+    kw = dict(
+        raw_long=_raw_dict_to_long(raw),
+        raw_series=raw,
+        subtrack="C-US",
+        base_dir=tmp_path / "snapshots",
+        spec_paths=specs,
+        p99={"rho": 0.05, "psi": 0.10, "omega": 8500.0},
+        freeze_date="2006-01-02",
+        lock_path=lock,
+        now_utc=dt.datetime(2026, 8, 18, 0, 5, 0, tzinfo=dt.timezone.utc),
+    )
+
     with pytest.raises(ValueError, match="dry_run"):
         writer.write_snapshot(**kw, snapshot_status="valid")  # mu_sigma 없음
+
     with pytest.raises(ValueError, match="not frozen yet"):
-        writer.write_snapshot(**kw, snapshot_status="valid",
-                              mu_sigma={"mu": 0.1, "sigma": 0.05})  # LIVE_* 미설정
+        writer.write_snapshot(
+            **kw,
+            snapshot_status="valid",
+            mu_sigma={"mu": 0.1, "sigma": 0.05},
+        )  # LIVE_* 미설정
 
 
 def test_official_snapshot_enforces_config_match(tmp_path, monkeypatch):
     """freeze 후: 공식 snapshot의 p99/mu_sigma/freeze_date가 config frozen 상수와
-    다르면 거부, 일치하면 통과 (data contract: 상수 일치)."""
+    다르면 거부, 일치하면 통과.
+    """
     import datetime as dt
     from pi_archive import config as cfg, writer
+
     frozen_p99 = {"rho": 0.05, "psi": 0.10, "omega": 8500.0}
     frozen_ms = {"mu": 0.1, "sigma": 0.05}
     monkeypatch.setattr(cfg, "LIVE_P99", frozen_p99)
@@ -442,27 +565,43 @@ def test_official_snapshot_enforces_config_match(tmp_path, monkeypatch):
 
     raw = make_raw()
     specs, lock = _spec_and_lock(tmp_path)
-    kw = dict(raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-              base_dir=tmp_path / "snapshots", spec_paths=specs, lock_path=lock,
-              now_utc=dt.datetime(2026, 8, 21, 0, 5, 0, tzinfo=dt.timezone.utc))
+    kw = dict(
+        raw_long=_raw_dict_to_long(raw),
+        raw_series=raw,
+        subtrack="C-US",
+        base_dir=tmp_path / "snapshots",
+        spec_paths=specs,
+        lock_path=lock,
+        now_utc=dt.datetime(2026, 8, 21, 0, 5, 0, tzinfo=dt.timezone.utc),
+    )
 
     with pytest.raises(ValueError, match="does not match frozen"):
-        writer.write_snapshot(**kw, p99={"rho": 9.9, "psi": 0.10, "omega": 8500.0},
-                              mu_sigma=frozen_ms, freeze_date="2026-08-20",
-                              snapshot_status="valid")
-    run_dir = writer.write_snapshot(**kw, p99=frozen_p99, mu_sigma=frozen_ms,
-                                    freeze_date="2026-08-20",
-                                    snapshot_status="valid",
-                                    code_git_commit="abc123")
+        writer.write_snapshot(
+            **kw,
+            p99={"rho": 9.9, "psi": 0.10, "omega": 8500.0},
+            mu_sigma=frozen_ms,
+            freeze_date="2026-08-20",
+            snapshot_status="valid",
+        )
+
+    run_dir = writer.write_snapshot(
+        **kw,
+        p99=frozen_p99,
+        mu_sigma=frozen_ms,
+        freeze_date="2026-08-20",
+        snapshot_status="valid",
+        code_git_commit="abc123",
+    )
+
     from pi_archive.writer import verify_snapshot
     assert verify_snapshot(run_dir)
-
 
 
 def test_official_snapshot_requires_audit_metadata(tmp_path, monkeypatch):
     """공식 snapshot은 repo commit과 requirements.lock hash가 있어야 한다."""
     import datetime as dt
     from pi_archive import config as cfg, writer
+
     frozen_p99 = {"rho": 0.05, "psi": 0.10, "omega": 8500.0}
     frozen_ms = {"mu": 0.1, "sigma": 0.05}
     monkeypatch.setattr(cfg, "LIVE_P99", frozen_p99)
@@ -471,30 +610,46 @@ def test_official_snapshot_requires_audit_metadata(tmp_path, monkeypatch):
 
     raw = make_raw()
     specs, lock = _spec_and_lock(tmp_path)
-    kw = dict(raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-              base_dir=tmp_path / "snapshots", spec_paths=specs,
-              p99=frozen_p99, mu_sigma=frozen_ms, freeze_date="2026-08-20",
-              snapshot_status="valid",
-              now_utc=dt.datetime(2026, 8, 22, 0, 5, 0, tzinfo=dt.timezone.utc))
+    kw = dict(
+        raw_long=_raw_dict_to_long(raw),
+        raw_series=raw,
+        subtrack="C-US",
+        base_dir=tmp_path / "snapshots",
+        spec_paths=specs,
+        p99=frozen_p99,
+        mu_sigma=frozen_ms,
+        freeze_date="2026-08-20",
+        snapshot_status="valid",
+        now_utc=dt.datetime(2026, 8, 22, 0, 5, 0, tzinfo=dt.timezone.utc),
+    )
 
     with pytest.raises(ValueError, match="code_git_commit"):
         writer.write_snapshot(**kw, lock_path=lock)
+
     with pytest.raises(ValueError, match="requirements.lock"):
         writer.write_snapshot(**kw, code_git_commit="abc123")
 
 
 def test_dry_run_without_threshold_has_null_alert_level(tmp_path):
     """dry_run에서 μ/σ가 없으면 pending_freeze 같은 제4상태를 쓰지 않는다."""
-    import datetime as dt, json
+    import datetime as dt
+    import json
     from pi_archive import writer
+
     raw = make_raw()
     specs, lock = _spec_and_lock(tmp_path)
     run_dir = writer.write_snapshot(
-        raw_long=_raw_dict_to_long(raw), raw_series=raw, subtrack="C-US",
-        base_dir=tmp_path / "snapshots", spec_paths=specs,
+        raw_long=_raw_dict_to_long(raw),
+        raw_series=raw,
+        subtrack="C-US",
+        base_dir=tmp_path / "snapshots",
+        spec_paths=specs,
         p99={"rho": 0.05, "psi": 0.10, "omega": 8500.0},
-        freeze_date="2006-01-02", lock_path=lock, snapshot_status="dry_run",
-        now_utc=dt.datetime(2026, 8, 23, 0, 5, 0, tzinfo=dt.timezone.utc))
+        freeze_date="2006-01-02",
+        lock_path=lock,
+        snapshot_status="dry_run",
+        now_utc=dt.datetime(2026, 8, 23, 0, 5, 0, tzinfo=dt.timezone.utc),
+    )
     comp = pd.read_csv(run_dir / "computed.csv")
     assert comp["alert_level"].dropna().empty
     alert = json.loads((run_dir / "alert.json").read_text())
