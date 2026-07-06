@@ -1,0 +1,151 @@
+{
+  "results_full_disclosure": [
+    {
+      "event": "GFC_2008",
+      "kind": "positive",
+      "mode": "historical_repro",
+      "p99_event_specific": {
+        "rho": 0.30000000000000027,
+        "psi": 0.14999999999999997,
+        "omega": 7863.366322571428
+      },
+      "windows": {
+        "stable": [
+          "2004-01-01",
+          "2006-12-31"
+        ],
+        "control": [
+          "2004-01-09",
+          "2006-06-30"
+        ],
+        "crisis": [
+          "2005-01-05",
+          "2009-03-31"
+        ]
+      },
+      "Pi_crisis": 1.7424677007500584,
+      "Pi_control": 0.0908322051965135,
+      "N_crisis": 1105,
+      "N_control": 646,
+      "Sep_Pi": 19.1833689051176,
+      "Sep_Sbar": 11.214892590684137,
+      "mu_control": 0.048685335995069745,
+      "sigma_control": 0.028931797117040345,
+      "n_red_episodes": 1,
+      "episodes": [
+        [
+          "2007-08-13",
+          null
+        ]
+      ],
+      "stable_max_abs_corr": 0.13909841769701173,
+      "sensitivity_DCPF3M_minus_DGS3MO": null,
+      "missingness": {
+        "DFF": {
+          "n_obs": 1917,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DCPF3M": {
+          "n_obs": 1369,
+          "n_missing": 98,
+          "missing_rate": 0.07158509861212564
+        },
+        "DTB3": {
+          "n_obs": 1369,
+          "n_missing": 56,
+          "missing_rate": 0.04090577063550037
+        },
+        "TOTBKCR": {
+          "n_obs": 273,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DGS3MO": {
+          "n_obs": 1369,
+          "n_missing": 56,
+          "missing_rate": 0.04090577063550037
+        },
+        "TEDRATE": {
+          "n_obs": 1369,
+          "n_missing": 79,
+          "missing_rate": 0.0577063550036523
+        }
+      }
+    },
+    {
+      "event": "REPO_2019",
+      "kind": "negative",
+      "mode": "historical_repro",
+      "p99_event_specific": {
+        "rho": 0.25,
+        "psi": 0.10999999999999999,
+        "omega": 13044.473476142857
+      },
+      "windows": {
+        "stable": [
+          "2014-01-01",
+          "2018-12-31"
+        ],
+        "control": [
+          "2017-01-01",
+          "2018-12-31"
+        ],
+        "crisis": [
+          "2019-01-01",
+          "2020-02-29"
+        ]
+      },
+      "Pi_crisis": 0.030192210120176362,
+      "Pi_control": 0.04314093488242663,
+      "N_crisis": 304,
+      "N_control": 521,
+      "Sep_Pi": 0.6998506222097448,
+      "Sep_Sbar": 1.199415046616043,
+      "mu_control": 0.030556557805944483,
+      "sigma_control": 0.018608833346126265,
+      "n_red_episodes": 1,
+      "episodes": [
+        [
+          "2019-11-04",
+          "2020-02-05"
+        ]
+      ],
+      "stable_max_abs_corr": 0.3054878747804894,
+      "sensitivity_DCPF3M_minus_DGS3MO": null,
+      "missingness": {
+        "DFF": {
+          "n_obs": 2251,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DCPF3M": {
+          "n_obs": 1608,
+          "n_missing": 87,
+          "missing_rate": 0.054104477611940295
+        },
+        "DTB3": {
+          "n_obs": 1608,
+          "n_missing": 68,
+          "missing_rate": 0.04228855721393035
+        },
+        "TOTBKCR": {
+          "n_obs": 322,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DGS3MO": {
+          "n_obs": 1608,
+          "n_missing": 68,
+          "missing_rate": 0.04228855721393035
+        },
+        "TEDRATE": {
+          "n_obs": 1608,
+          "n_missing": 94,
+          "missing_rate": 0.05845771144278607
+        }
+      }
+    }
+  ],
+  "note": "foundation reproduction only \u2014 NOT the live frozen specification; excluded from pass/fail (SPEC \u00a71.2)"
+}

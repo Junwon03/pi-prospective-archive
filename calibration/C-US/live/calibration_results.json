@@ -1,0 +1,402 @@
+{
+  "results_full_disclosure": [
+    {
+      "event": "GFC_2008",
+      "kind": "positive",
+      "mode": "live",
+      "p99_event_specific": {
+        "rho": 0.30000000000000027,
+        "psi": 0.15000000000000036,
+        "omega": 7811.282215999996
+      },
+      "windows": {
+        "stable": [
+          "2004-01-01",
+          "2006-12-31"
+        ],
+        "control": [
+          "2004-01-09",
+          "2006-06-30"
+        ],
+        "crisis": [
+          "2005-01-05",
+          "2009-03-31"
+        ]
+      },
+      "Pi_crisis": 1.6960633089275885,
+      "Pi_control": 0.10502146850379726,
+      "N_crisis": 1074,
+      "N_control": 646,
+      "Sep_Pi": 16.149681899242,
+      "Sep_Sbar": 9.713868255968652,
+      "mu_control": 0.056567036423571276,
+      "sigma_control": 0.032291946840762885,
+      "n_red_episodes": 1,
+      "episodes": [
+        [
+          "2007-08-14",
+          null
+        ]
+      ],
+      "stable_max_abs_corr": 0.17601404922579214,
+      "sensitivity_DCPF3M_minus_DGS3MO": {
+        "variant": "DCPF3M_minus_DGS3MO",
+        "note": "record-only; never used to alter the frozen primary (SPEC \u00a71.1)",
+        "Sep_Pi": 16.0714615185119,
+        "Sep_Sbar": 9.666819498099336,
+        "stable_max_abs_corr": 0.18030301915876898
+      },
+      "missingness": {
+        "DFF": {
+          "n_obs": 1917,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DCPF3M": {
+          "n_obs": 1369,
+          "n_missing": 98,
+          "missing_rate": 0.07158509861212564
+        },
+        "DTB3": {
+          "n_obs": 1369,
+          "n_missing": 56,
+          "missing_rate": 0.04090577063550037
+        },
+        "TOTBKCR": {
+          "n_obs": 273,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DGS3MO": {
+          "n_obs": 1369,
+          "n_missing": 56,
+          "missing_rate": 0.04090577063550037
+        },
+        "TEDRATE": {
+          "n_obs": 1369,
+          "n_missing": 79,
+          "missing_rate": 0.0577063550036523
+        }
+      }
+    },
+    {
+      "event": "CREDIT_SHOCK_2020",
+      "kind": "positive",
+      "mode": "live",
+      "p99_event_specific": {
+        "rho": 0.25,
+        "psi": 0.24970000000000028,
+        "omega": 13043.524133
+      },
+      "windows": {
+        "stable": [
+          "2014-01-01",
+          "2018-12-31"
+        ],
+        "control": [
+          "2017-01-01",
+          "2018-12-31"
+        ],
+        "crisis": [
+          "2020-01-01",
+          "2020-06-30"
+        ]
+      },
+      "Pi_crisis": 0.21277292509283793,
+      "Pi_control": 0.042564027377832096,
+      "N_crisis": 91,
+      "N_control": 521,
+      "Sep_Pi": 4.998890805235523,
+      "Sep_Sbar": 28.620023181623157,
+      "mu_control": 0.028540078474196467,
+      "sigma_control": 0.014468063080596482,
+      "n_red_episodes": 1,
+      "episodes": [
+        [
+          "2020-03-05",
+          null
+        ]
+      ],
+      "stable_max_abs_corr": 0.39794243394530593,
+      "sensitivity_DCPF3M_minus_DGS3MO": {
+        "variant": "DCPF3M_minus_DGS3MO",
+        "note": "record-only; never used to alter the frozen primary (SPEC \u00a71.1)",
+        "Sep_Pi": 5.051416481673538,
+        "Sep_Sbar": 28.920747109361688,
+        "stable_max_abs_corr": 0.3994725595396812
+      },
+      "missingness": {
+        "DFF": {
+          "n_obs": 2373,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DCPF3M": {
+          "n_obs": 1695,
+          "n_missing": 134,
+          "missing_rate": 0.07905604719764012
+        },
+        "DTB3": {
+          "n_obs": 1695,
+          "n_missing": 70,
+          "missing_rate": 0.04129793510324484
+        },
+        "TOTBKCR": {
+          "n_obs": 339,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DGS3MO": {
+          "n_obs": 1695,
+          "n_missing": 70,
+          "missing_rate": 0.04129793510324484
+        },
+        "TEDRATE": {
+          "n_obs": 1695,
+          "n_missing": 98,
+          "missing_rate": 0.05781710914454277
+        }
+      }
+    },
+    {
+      "event": "SVB_2023",
+      "kind": "positive",
+      "mode": "live",
+      "p99_event_specific": {
+        "rho": 0.04000000000000001,
+        "psi": 0.08399999999999978,
+        "omega": 16454.047899999998
+      },
+      "windows": {
+        "stable": [
+          "2021-01-01",
+          "2021-12-31"
+        ],
+        "control": [
+          "2021-01-01",
+          "2021-12-31"
+        ],
+        "crisis": [
+          "2023-01-01",
+          "2023-06-30"
+        ]
+      },
+      "Pi_crisis": 0.18108124207064727,
+      "Pi_control": 0.012951739145795026,
+      "N_crisis": 100,
+      "N_control": 261,
+      "Sep_Pi": 13.98122985895975,
+      "Sep_Sbar": 36.49100993188496,
+      "mu_control": 0.019645105090424355,
+      "sigma_control": 0.006189555251576908,
+      "n_red_episodes": 1,
+      "episodes": [
+        [
+          "2023-01-04",
+          null
+        ]
+      ],
+      "stable_max_abs_corr": 0.18892437393940337,
+      "sensitivity_DCPF3M_minus_DGS3MO": {
+        "variant": "DCPF3M_minus_DGS3MO",
+        "note": "record-only; never used to alter the frozen primary (SPEC \u00a71.1)",
+        "Sep_Pi": 15.022817919775585,
+        "Sep_Sbar": 39.209554770614275,
+        "stable_max_abs_corr": 0.19522426098541387
+      },
+      "missingness": {
+        "DFF": {
+          "n_obs": 911,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DCPF3M": {
+          "n_obs": 651,
+          "n_missing": 176,
+          "missing_rate": 0.27035330261136714
+        },
+        "DTB3": {
+          "n_obs": 651,
+          "n_missing": 26,
+          "missing_rate": 0.039938556067588324
+        },
+        "TOTBKCR": {
+          "n_obs": 130,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DGS3MO": {
+          "n_obs": 651,
+          "n_missing": 26,
+          "missing_rate": 0.039938556067588324
+        },
+        "TEDRATE": {
+          "n_obs": 276,
+          "n_missing": 18,
+          "missing_rate": 0.06521739130434782
+        }
+      }
+    },
+    {
+      "event": "REPO_2019",
+      "kind": "negative",
+      "mode": "live",
+      "p99_event_specific": {
+        "rho": 0.25,
+        "psi": 0.24970000000000028,
+        "omega": 13043.524133
+      },
+      "windows": {
+        "stable": [
+          "2014-01-01",
+          "2018-12-31"
+        ],
+        "control": [
+          "2017-01-01",
+          "2018-12-31"
+        ],
+        "crisis": [
+          "2019-01-01",
+          "2020-02-29"
+        ]
+      },
+      "Pi_crisis": 0.014082149991007445,
+      "Pi_control": 0.042564027377832096,
+      "N_crisis": 304,
+      "N_control": 521,
+      "Sep_Pi": 0.3308462769747586,
+      "Sep_Sbar": 0.567009573367925,
+      "mu_control": 0.028540078474196467,
+      "sigma_control": 0.014468063080596482,
+      "n_red_episodes": 0,
+      "episodes": [],
+      "stable_max_abs_corr": 0.39794243394530593,
+      "sensitivity_DCPF3M_minus_DGS3MO": {
+        "variant": "DCPF3M_minus_DGS3MO",
+        "note": "record-only; never used to alter the frozen primary (SPEC \u00a71.1)",
+        "Sep_Pi": 0.3317839366102976,
+        "Sep_Sbar": 0.568616549256464,
+        "stable_max_abs_corr": 0.3994725595396812
+      },
+      "missingness": {
+        "DFF": {
+          "n_obs": 2251,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DCPF3M": {
+          "n_obs": 1608,
+          "n_missing": 87,
+          "missing_rate": 0.054104477611940295
+        },
+        "DTB3": {
+          "n_obs": 1608,
+          "n_missing": 68,
+          "missing_rate": 0.04228855721393035
+        },
+        "TOTBKCR": {
+          "n_obs": 322,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DGS3MO": {
+          "n_obs": 1608,
+          "n_missing": 68,
+          "missing_rate": 0.04228855721393035
+        },
+        "TEDRATE": {
+          "n_obs": 1608,
+          "n_missing": 94,
+          "missing_rate": 0.05845771144278607
+        }
+      }
+    },
+    {
+      "event": "QUIET_2017",
+      "kind": "negative",
+      "mode": "live",
+      "p99_event_specific": {
+        "rho": 0.21,
+        "psi": 0.20179999999999954,
+        "omega": 12083.5448
+      },
+      "windows": {
+        "stable": [
+          "2014-01-01",
+          "2016-12-31"
+        ],
+        "control": [
+          "2015-01-01",
+          "2016-12-31"
+        ],
+        "crisis": [
+          "2017-01-01",
+          "2017-12-31"
+        ]
+      },
+      "Pi_crisis": 0.031377012440612355,
+      "Pi_control": 0.02725782503199323,
+      "N_crisis": 260,
+      "N_control": 522,
+      "Sep_Pi": 1.1511194456558558,
+      "Sep_Sbar": 2.3110936562782953,
+      "mu_control": 0.011535383214277987,
+      "sigma_control": 0.010238094297203964,
+      "n_red_episodes": 1,
+      "episodes": [
+        [
+          "2017-01-02",
+          "2017-08-24"
+        ]
+      ],
+      "stable_max_abs_corr": 0.48810187510384145,
+      "sensitivity_DCPF3M_minus_DGS3MO": {
+        "variant": "DCPF3M_minus_DGS3MO",
+        "note": "record-only; never used to alter the frozen primary (SPEC \u00a71.1)",
+        "Sep_Pi": 1.1575609079834632,
+        "Sep_Sbar": 2.3240261306437224,
+        "stable_max_abs_corr": 0.4904368045786662
+      },
+      "missingness": {
+        "DFF": {
+          "n_obs": 1461,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DCPF3M": {
+          "n_obs": 1043,
+          "n_missing": 52,
+          "missing_rate": 0.04985618408437201
+        },
+        "DTB3": {
+          "n_obs": 1043,
+          "n_missing": 42,
+          "missing_rate": 0.040268456375838924
+        },
+        "TOTBKCR": {
+          "n_obs": 209,
+          "n_missing": 0,
+          "missing_rate": 0.0
+        },
+        "DGS3MO": {
+          "n_obs": 1043,
+          "n_missing": 42,
+          "missing_rate": 0.040268456375838924
+        },
+        "TEDRATE": {
+          "n_obs": 1043,
+          "n_missing": 59,
+          "missing_rate": 0.05656759348034516
+        }
+      }
+    }
+  ],
+  "passfail_summary": {
+    "positive_pass": 3,
+    "positive_total": 3,
+    "positive_criterion": true,
+    "negative_zero_red": false,
+    "nonredundancy_ok": true,
+    "overall_pass": false
+  }
+}
