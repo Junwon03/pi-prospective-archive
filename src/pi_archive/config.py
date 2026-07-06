@@ -52,7 +52,8 @@ CORRECTION_DRAWDOWN = 0.12
 
 # ---------------------------------------------------- calibration events
 # SPEC §5.1 — window가 "고정 ✓"인 사건은 foundation 공개 값 상속.
-# TODO 사건은 calibration_plan.md 사전등록 후 채움 (실행 전 commit 필수).
+# 신규 사건은 calibration/C-US/calibration_plan.md v1 사전등록 후 반영.
+# 이 파일은 사전등록 plan의 event_id와 코드 event key를 맞춘다.
 CALIBRATION_EVENTS = {
     "GFC_2008": {
         "kind": "positive",
@@ -61,18 +62,18 @@ CALIBRATION_EVENTS = {
         "crisis": ("2005-01-05", "2009-03-31"),      # foundation 상속
         "modes": ["historical_repro", "live"],
     },
-    "COVID_2020": {
+    "CREDIT_SHOCK_2020": {
         "kind": "positive",
-        "stable": None,   # [TODO 사전등록 — 2019-09 repo spike 배제 조건]
-        "control": None,  # [TODO 사전등록]
-        "crisis": None,   # [TODO 사전등록]
+        "stable": ("2014-01-01", "2018-12-31"),
+        "control": ("2017-01-01", "2018-12-31"),
+        "crisis": ("2020-01-01", "2020-06-30"),
         "modes": ["live"],
     },
     "SVB_2023": {
         "kind": "positive",
-        "stable": None,   # [TODO 사전등록 — 2022 긴축기 포함 여부 명시 결정]
-        "control": None,
-        "crisis": None,
+        "stable": ("2021-01-01", "2021-12-31"),
+        "control": ("2021-01-01", "2021-12-31"),
+        "crisis": ("2023-01-01", "2023-06-30"),
         "modes": ["live"],
     },
     "REPO_2019": {
@@ -82,11 +83,11 @@ CALIBRATION_EVENTS = {
         "crisis": ("2019-01-01", "2020-02-29"),      # foundation 상속
         "modes": ["historical_repro", "live"],
     },
-    "QUIET": {
+    "QUIET_2017": {
         "kind": "negative",
-        "stable": None,   # [TODO 사전등록]
-        "control": None,
-        "crisis": None,   # quiet 평가 구간
+        "stable": ("2014-01-01", "2016-12-31"),
+        "control": ("2015-01-01", "2016-12-31"),
+        "crisis": ("2017-01-01", "2017-12-31"),  # negative control evaluation window
         "modes": ["live"],
     },
 }
