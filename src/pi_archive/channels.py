@@ -16,16 +16,22 @@ from . import config
 
 # ----------------------------------------------------------------- align
 
-def locf_align(series: pd.Series, limit_calendar_days: int) -> pd.Series:
+def locf_align(series: pd.Series, limit_calendar_days: int, end=None) -> pd.Series:
     """As-of alignment: 일 캘린더로 reindex 후 과거값만 LOCF (한도 내).
 
     인과성 보장: t 시점 값은 t 이전 관측만으로 결정된다.
     한도 초과 gap은 NaN으로 남는다 (computed unavailable — SPEC §1.3).
+
+    end가 주어지면 series의 마지막 관측일 이후에도 end까지 캘린더를 확장한다.
+    이는 주간/지연 시리즈(TOTBKCR 등)가 일별 grid보다 먼저 끝나는 live
+    snapshot에서, 허용 한도 내 trailing LOCF가 동작하게 하기 위한 것이다.
+    미래값을 만들지 않고 마지막 관측값만 carry하므로 인과성은 유지된다.
     """
     s = series.dropna().sort_index()
     if s.empty:
         return s
-    cal = pd.date_range(s.index.min(), s.index.max(), freq="D")
+    stop = s.index.max() if end is None else max(s.index.max(), pd.Timestamp(end))
+    cal = pd.date_range(s.index.min(), stop, freq="D")
     return s.reindex(cal).ffill(limit=limit_calendar_days)
 
 
@@ -71,14 +77,10 @@ def build_credit_channels(
         raise ValueError(f"unknown mode: {mode}")
 
     lim = config.FILL_LIMIT_CALENDAR_DAYS
-    dff = locf_align(raw["DFF"], lim["DFF"])
 
     if mode == "live":
         if psi_short not in ("DTB3", "DGS3MO"):
             raise ValueError(f"psi_short must be DTB3 (primary) or DGS3MO (sensitivity), got {psi_short}")
-        cp = locf_align(raw["DCPF3M"], lim["DCPF3M"])
-        short = locf_align(raw[psi_short], lim[psi_short])
-        omega_daily = locf_align(raw["TOTBKCR"], lim["TOTBKCR"])
 
         obs_days = (
             raw["DFF"].dropna().index
@@ -86,6 +88,13 @@ def build_credit_channels(
             .union(raw[psi_short].dropna().index)
         )
         grid = pd.DatetimeIndex(sorted(d for d in obs_days if d.weekday() < 5))
+        grid_end = grid.max() if len(grid) else None
+
+        dff = locf_align(raw["DFF"], lim["DFF"], end=grid_end)
+        cp = locf_align(raw["DCPF3M"], lim["DCPF3M"], end=grid_end)
+        short = locf_align(raw[psi_short], lim[psi_short], end=grid_end)
+        omega_daily = locf_align(raw["TOTBKCR"], lim["TOTBKCR"], end=grid_end)
+
         psi_base = (cp - short).reindex(grid)
 
     else:  # historical_repro — foundation 조합 재현 (SPEC §1.2)
@@ -94,11 +103,15 @@ def build_credit_channels(
                 "historical_repro requires TEDRATE (SPEC §1.2: "
                 "historical = DFF x TEDRATE x TOTBKCR). live 조합 재현이 목적이면 mode='live'."
             )
-        ted = locf_align(raw["TEDRATE"], lim["TEDRATE"])
-        omega_daily = linear_interp_NONCAUSAL_repro_only(raw["TOTBKCR"])
 
         obs_days = raw["DFF"].dropna().index.union(raw["TEDRATE"].dropna().index)
         grid = pd.DatetimeIndex(sorted(d for d in obs_days if d.weekday() < 5))
+        grid_end = grid.max() if len(grid) else None
+
+        dff = locf_align(raw["DFF"], lim["DFF"], end=grid_end)
+        ted = locf_align(raw["TEDRATE"], lim["TEDRATE"], end=grid_end)
+        omega_daily = linear_interp_NONCAUSAL_repro_only(raw["TOTBKCR"])
+
         psi_base = ted.reindex(grid)
 
     rho = abs_delta_trading(dff.reindex(grid))
