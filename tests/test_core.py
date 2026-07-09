@@ -117,6 +117,23 @@ def test_weekly_locf_within_limit():
     assert len(chan) > 1500
 
 
+def test_trailing_locf_extends_weekly_series_to_grid_within_limit():
+    """주간 시리즈가 일별 grid보다 먼저 끝나도 trailing LOCF는 한도 내에서 유효해야 함.
+
+    실제 FRED live snapshot에서는 TOTBKCR 최신 관측이 일별 DFF/DTB3/DCPF3M보다
+    늦게 발표된다. 이때 마지막 TOTBKCR 관측 이후 14 calendar days 이내 business
+    day는 omega_raw가 마지막 값으로 carry되어야 하고, 한도 초과일은 NaN이어야 한다.
+    """
+    raw = make_raw()
+    raw["TOTBKCR"] = raw["TOTBKCR"].loc[:"2010-12-15"]
+
+    chan = ch.build_credit_channels(raw, mode="live", drop_incomplete=False)
+    last_omega = raw["TOTBKCR"].iloc[-1]
+
+    assert chan.loc[pd.Timestamp("2010-12-29"), "omega_raw"] == pytest.approx(last_omega)
+    assert pd.isna(chan.loc[pd.Timestamp("2010-12-30"), "omega_raw"])
+
+
 def test_gap_beyond_limit_marks_unavailable():
     """일별 채널에 6일 초과 공백 → 해당 구간 computed에서 제외 (unavailable)."""
     raw = make_raw()
