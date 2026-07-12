@@ -1,95 +1,563 @@
-pi-prospective-archive
+# pi-prospective-archive
 
-Π 프레임워크의 사전등록(pre-registered) prospective 검증 아카이브 — C-US (미국 신용 섹터)
+**Pre-freeze prospective archive for the Π Structural Stability framework — C-US subtrack**
 
-이 저장소는 곱셈형 스트레스 지수 Π = ρ × Ψ × Ω 의 진단 규칙을 미리 동결(freeze)하고, 그 이후의 시장 데이터를 매일 자동으로 기록하여 "결과를 보고 사후에 규칙을 맞춘 것이 아님"을 시간 순서로 증명하기 위한 증거 아카이브입니다.
+This repository is a prospective, versioned, append-only archive for the C-US financial stress subtrack.
 
+The archive is designed to freeze a diagnostic rule before future market outcomes occur, then record daily source data, computed stress values, alert summaries, metadata, and file hashes in chronological order. Its purpose is to make post-hoc rule fitting auditable and difficult: once frozen, the definitions, constants, alert rules, and outcome criteria are not changed in response to future events.
 
-이 저장소가 무엇인가 / 무엇이 아닌가
+This repository is a research record. Nothing in this repository constitutes investment, trading, portfolio allocation, or risk-management advice.
 
-이것은:
+---
 
+## Current Status
 
-사전등록된 진단 프레임워크(pre-registered diagnostic framework)의 운영 기록
-채널 정의·정규화 상수·경보 규칙·성과 판정 기준을 freeze 시점에 고정하고, 이후 변경하지 않는 불변 아카이브
-매일 "그날 실제로 보였던" 원본 데이터(point-in-time vintage)를 append-only로 박제하는 저장소
+| Component                   | Status                                       |
+| --------------------------- | -------------------------------------------- |
+| C-US subtrack               | Pre-freeze / dry-run                         |
+| Target valid archive start  | 2026-08-03                                   |
+| Prospective evidence status | Not yet active                               |
+| Current snapshots           | `dry_run` only                               |
+| Calibration                 | v1 and v2 records preserved                  |
+| Primary outcome proxy       | KBE                                          |
+| Secondary market check      | BKX, if openly reproducible                  |
+| Secondary banking outcome   | FDIC failed bank event with assets ≥ USD 10B |
 
+Valid prospective evidence begins only after the C-US freeze commit and release. All dry-run snapshots, calibration outputs, diagnostics, and pre-freeze notes are audit records, not prospective evidence.
 
-이것이 아닌 것:
+---
 
+## What This Repository Is
 
-❌ 예측 서비스 또는 투자 신호 — 경보(alert)는 연구 기록이며, 이 저장소의 어떤 내용도 투자 조언이 아닙니다.
-❌ 정확한 확률 모형 — Π는 parameter-free 진단(diagnostic) 지수입니다.
-❌ 가변 분석 환경 — freeze 이후 동결된 정의는 수정되지 않습니다. 변경이 필요하면 새 SPEC 버전으로 분기합니다.
+This repository is:
 
+* a pre-freeze diagnostic archive for the C-US financial stress subtrack;
+* an append-only record of daily source observations and computed stress signals;
+* a reproducible implementation of a fixed, causal stress construction;
+* a time-stamped audit trail for calibration, dry-run validation, implementation fixes, and future valid snapshots;
+* a foundation for a prospective financial-stress dataset intended for long-horizon research use.
 
-현재 상태
+The target archive horizon is at least 500 days and potentially up to 2 years or more.
 
-항목상태C-US (미국 신용 섹터)dry-run 단계 — 파이프라인 시운전 중. 현재 쌓이는 snapshot은 dry_run 신분이며 평가에서 제외됩니다Prospective 증거 시작아직 아님. C-US SPEC freeze commit 시점부터 시작됩니다M-KR (한국 시장 섹터)보류 — 데이터 소스 안정성 확정 후 별도 시계로 시작
+---
 
-Prospective 증거는 각 subtrack의 SPEC freeze 시점부터만 인정됩니다. freeze 이전의 모든 기록(dry_run, calibration)은 시운전·적합성 점검이며 prospective 증거로 계산되지 않습니다. 이 원칙은 SPEC 문서에 명문화되어 있습니다.
+## What This Repository Is Not
 
--8월 1일부터 아카이브 실가동이 목표 입니다.-
+This repository is not:
 
-핵심 설계 원칙
+* an investment signal;
+* a trading model;
+* a portfolio allocation tool;
+* a probabilistic forecasting model;
+* a post-hoc backtest optimization project;
+* a service that changes its rule after seeing future market outcomes.
 
+Alerts are research records only.
 
-사전동결 + 시간순서 — 변수·정규화·경보·판정 규칙을 미래 사건이 일어나기 전에 고정하고 타임스탬프로 박제. 사후 적합(post-hoc fitting)이 물리적으로 불가능한 구조.
-Point-in-time 원칙 — raw 층은 그날 fetch된 원본 값을 그대로 기록. 데이터 제공자의 사후 수정(revision)은 이후 snapshot에만 나타나며, 과거 snapshot은 절대 재계산·수정되지 않음.
-인과적 계산 (no-lookahead) — 어떤 계산도 미래 관측치를 사용하지 않음. "시점 t에서 데이터를 절단해 계산한 값 = 전체 데이터 계산의 t 이전 값"이 단위 테스트로 상시 검증됨.
-Append-only — force-push·브랜치 삭제 차단. 정정(correction)은 과거 수정이 아니라 새 run으로 추가되며, 사유는 통제 어휘(controlled vocabulary)로 제한.
-전면 공개 — calibration의 통과/탈락 판정뿐 아니라 모든 원시 지표를 공개. 은폐 없음.
+---
 
+## Core Diagnostic Construction
 
-저장소 구조
+The C-US archive uses a multiplicative stress construction:
 
-SPEC-1.0_common_v4.md      ← 공통 운영 헌법 (인과성·correction·검증 규칙)
-SPEC-1.0-C-US_v5.md        ← C-US subtrack 헌법 (채널·경보·판정 정의)
-src/pi_archive/            ← 계산·기록 코드 (SPEC의 기계적 표현)
-tests/                     ← 불변량 테스트 (인과성·append-only·계약 검증 등)
-.github/workflows/         ← 자동화: CI / 일일 수집 / health check
-snapshots/C-US/{날짜}/{run}/  ← 일일 snapshot (raw / computed / alert / meta / manifest)
+```text
+S(t) = rho_hat(t) * psi_hat(t) * omega_hat(t)
+```
 
-각 snapshot은 5개 파일로 구성됩니다: raw.csv(그날 보인 원본), computed.csv(동결 규칙으로 계산된 값 + 계산 가능 여부 상태), alert.json(그날의 경보 레벨), meta.json(계산에 쓰인 상수·코드 commit·환경 hash 박제), manifest.sha256(파일 무결성).
+For the C-US live specification:
 
-Snapshot 검증 방법 (감사자용)
+```text
+rho   = absolute 5-trading-observation change in DFF
+psi   = absolute 5-trading-observation change in DCPF3M - DTB3
+omega = TOTBKCR level, aligned by as-of LOCF
+```
 
-누구든 다음을 확인할 수 있습니다:
+The smoothed alert metric is:
 
-bashgit clone https://github.com/Junwon03/pi-prospective-archive
+```text
+Sbar_w = trailing 90-trading-observation rolling mean of S
+```
+
+The live alert thresholds will be:
+
+```text
+yellow = LIVE_MU + 2 * LIVE_SIGMA
+red    = LIVE_MU + 3 * LIVE_SIGMA
+```
+
+The target freeze date is:
+
+```text
+LIVE_FREEZE_DATE = 2026-08-03
+```
+
+---
+
+## Freeze Constants Candidate
+
+The current pre-freeze candidate constants are recorded in:
+
+```text
+calibration/C-US/live_freeze_constants_v1.json
+calibration/C-US/live_freeze_constants_v1.md
+```
+
+Current selected method:
+
+```text
+Option B: in-window Sbar with 90-observation burn-in
+```
+
+Candidate values:
+
+```text
+LIVE_STABLE_WINDOW = 2024-01-01 to 2025-12-31
+
+LIVE_P99:
+rho   = 0.25
+psi   = 0.1999999999999993
+omega = 18958.8656
+
+LIVE_MU_SIGMA:
+mu    = 0.03397769653160021
+sigma = 0.038047420246019654
+
+Implied thresholds:
+yellow = 0.11007253702363952
+red    = 0.14811995726965918
+```
+
+These values are not official until copied into `src/pi_archive/config.py` and committed as the freeze commit.
+
+---
+
+## Outcome Definition
+
+The primary prospective outcome is U.S. bank-sector equity stress.
+
+Primary market proxy:
+
+```text
+KBE — SPDR S&P Bank ETF
+```
+
+Primary drawdown rule:
+
+```text
+reference price = KBE close on red episode open date
+drawdown = 1 - min_close_within_6_months / close_on_red_open_date
+```
+
+Outcome classes:
+
+```text
+correction = KBE drawdown >= 12% and < 25%
+collapse   = KBE drawdown >= 25%
+```
+
+Secondary market check:
+
+```text
+BKX — KBW Nasdaq Bank Index, if openly reproducible
+```
+
+Secondary banking outcome:
+
+```text
+FDIC failed bank event with reported total assets >= USD 10B
+```
+
+The outcome definition is recorded in:
+
+```text
+calibration/C-US/outcome_definition_v1.md
+```
+
+---
+
+## Calibration Record
+
+The archive preserves both the original v1 calibration result and the later v2 open-date attribution result.
+
+### v1 Window-Sliced Harness
+
+The original v1 window-sliced calibration result is preserved as full disclosure.
+
+Top-level result:
+
+```text
+positive_pass = 3
+positive_total = 3
+positive_criterion = true
+negative_zero_red = false
+nonredundancy_ok = true
+overall_pass = false
+```
+
+QUIET_2017 failed under the v1 window-sliced harness.
+
+### QUIET_2017 Diagnosis
+
+A later diagnostic showed that the QUIET_2017 red episode was not newly opened inside 2017.
+
+Continuous episode diagnosis:
+
+```text
+actual open date  = 2016-12-16
+actual close date = 2017-08-24
+```
+
+Therefore:
+
+```text
+newly opened red episodes inside 2017 = 0
+inherited active red episodes in 2017 = 1
+```
+
+This diagnosis is recorded in:
+
+```text
+calibration/C-US/quiet_2017_episode_diagnosis_v1.md
+```
+
+### v2 Open-Date Attribution Harness
+
+The v2 harness aligns scoring with the archive episode semantics: red episodes are attributed by their actual open date, while inherited active episodes are still disclosed.
+
+Top-level v2 result:
+
+```text
+positive_pass = 3
+positive_total = 3
+positive_criterion = true
+negative_zero_red = true
+nonredundancy_ok = true
+overall_pass = true
+```
+
+The v2 result is stored separately under:
+
+```text
+calibration/C-US/open_date_v2/
+```
+
+The v1 failure is not deleted or overwritten.
+
+---
+
+## Repository Structure
+
+```text
+SPEC-1.0_common_v4.md
+SPEC-1.0-C-US_v5.md
+
+src/pi_archive/
+  calibration.py
+  channels.py
+  config.py
+  daily.py
+  fetch_fred.py
+  health.py
+  stress.py
+  writer.py
+
+tests/
+  test_core.py
+  test_daily.py
+  test_workflows.py
+
+.github/workflows/
+  ci.yml
+  collect_c_us.yml
+  healthcheck.yml
+
+calibration/C-US/
+  calibration_plan.md
+  failure_analysis_v1.md
+  freeze_decision_note_v1.md
+  quiet_2017_episode_diagnosis_v1.md
+  calibration_scoring_addendum_v1.md
+  open_date_v2_results_note.md
+  live_reference_window_v1.md
+  live_freeze_constants_v1.json
+  live_freeze_constants_v1.md
+  outcome_definition_v1.md
+  freeze_protocol_v1.md
+  dry_run_stability_note_v1.md
+  live/
+  reproduction/
+  open_date_v2/
+
+snapshots/C-US/
+  YYYY-MM-DD/
+    RUN_ID/
+      raw.csv
+      computed.csv
+      alert.json
+      meta.json
+      manifest.sha256
+
+docs/
+  data_dictionary.md
+  versioning_policy.md
+
+CITATION.cff
+LICENSE
+LICENSE-DATA.md
+requirements.lock
+run_calibration.py
+run_snapshot.py
+run_health_check.py
+```
+
+---
+
+## Snapshot Files
+
+Each snapshot contains:
+
+```text
+raw.csv
+computed.csv
+alert.json
+meta.json
+manifest.sha256
+```
+
+### raw.csv
+
+Source observations retrieved for the snapshot.
+
+### computed.csv
+
+Aligned channel values, normalized channel values, stress values, and alert-related computed fields.
+
+### alert.json
+
+Latest alert summary for the snapshot.
+
+### meta.json
+
+Audit metadata including:
+
+```text
+snapshot_id
+subtrack
+spec_version
+created_at_utc
+code_git_commit
+p99_used
+mu_sigma_used
+freeze_date
+spec hashes
+environment_hash
+snapshot_status
+data_sources
+file hashes
+```
+
+### manifest.sha256
+
+SHA-256 hashes of local snapshot files:
+
+```text
+raw.csv
+computed.csv
+alert.json
+meta.json
+```
+
+The manifest intentionally covers local snapshot files only. Code, SPEC, and environment integrity are recorded in `meta.json`.
+
+---
+
+## Reproducibility
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Junwon03/pi-prospective-archive
 cd pi-prospective-archive
+```
+
+Create and activate a virtual environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.lock
-python -m pytest -q                    # 전체 불변량 테스트
+```
 
+Run tests:
 
-무결성: 각 run 폴더의 manifest.sha256로 파일 hash 재검증 가능
-재현성: raw.csv + meta.json의 상수(p99_used 등)만으로 computed.csv 완전 재생성 가능
-계산 맥락: meta.json의 code_git_commit이 해당 snapshot을 생성한 정확한 코드 버전을 가리킴
-환경: environment_hash가 requirements.lock을 가리켜 실행 환경 고정
+```bash
+python -m pytest -q
+```
 
+Expected current result:
 
-정정(correction) 처리
+```text
+43 passed
+```
 
-잘못된 run은 삭제하지 않습니다. 새 correction run이 supersedes 포인터로 이전 run을 가리키며 추가되고, 사유는 통제 어휘(FRED_API_OUTAGE, PARTIAL_FETCH_FAILURE 등)로 제한됩니다. 평가 시에는 각 날짜의 최신 유효 run만 사용하되 이전 run도 영구 보존됩니다.
+---
 
-데이터 출처
+## Dry-Run and Valid Snapshots
 
-모든 입력은 FRED(Federal Reserve Economic Data)의 공개 시리즈입니다: DFF, DCPF3M, DTB3, TOTBKCR. 채널 정의와 선택 근거는 SPEC-1.0-C-US_v5.md §1에 명시되어 있습니다.
+Snapshot status values:
 
-인용
+```text
+dry_run
+valid
+correction
+```
 
-정식 인용은 freeze 이후 분기별 Zenodo 릴리스(불변 DOI)를 통해 제공될 예정입니다. 그 전까지는 이 저장소의 URL과 commit hash로 참조해 주십시오.
+Current status:
 
+```text
+dry_run
+```
 
-저자 및 기여
+Dry-run snapshots are operational validation records and are excluded from prospective evidence.
 
-아이디어, 연구 설계, 방법론적 결정, 최종 검증의 책임은 전적으로 저자에게 있습니다.
+Valid snapshots begin only after the freeze release.
 
-코드 작성 및 문서화는 다음 AI 모델의 지원을 받아 이루어졌습니다:
+---
 
+## No-Lookahead Rule
 
-Anthropic Claude Fable 5 — 아키텍처 설계 지원, 코드 작성, 테스트 스위트 구축
-OpenAI GPT-5.5 Pro — 설계 검수, 결함 탐지, 코드 패치, 코드작성, 테스트 스위트 구축
+Live computation must not use:
 
+* future observations;
+* centered rolling windows;
+* backward fill;
+* noncausal interpolation.
 
-This archive is a research record. Nothing in this repository constitutes investment advice.
+Live alignment uses past observations only.
+
+The test suite includes invariants for causal calculation, LOCF behavior, episode semantics, snapshot contracts, and official snapshot requirements.
+
+---
+
+## Correction Policy
+
+Past valid snapshots are not overwritten.
+
+If an error is found after freeze, the archive must use a documented correction path rather than silently replacing history.
+
+A correction must record:
+
+```text
+correction_reason
+supersedes
+whether computed-value interpretation changed
+whether a new SPEC version is required
+```
+
+If a correction changes frozen definitions or alert interpretation, a new SPEC version is required.
+
+---
+
+## Documentation
+
+Important audit and documentation files:
+
+```text
+docs/data_dictionary.md
+docs/versioning_policy.md
+
+calibration/C-US/freeze_protocol_v1.md
+calibration/C-US/dry_run_stability_note_v1.md
+calibration/C-US/outcome_definition_v1.md
+calibration/C-US/live_reference_window_v1.md
+calibration/C-US/live_freeze_constants_v1.md
+```
+
+Calibration audit files:
+
+```text
+calibration/C-US/calibration_plan.md
+calibration/C-US/failure_analysis_v1.md
+calibration/C-US/freeze_decision_note_v1.md
+calibration/C-US/quiet_2017_episode_diagnosis_v1.md
+calibration/C-US/calibration_scoring_addendum_v1.md
+calibration/C-US/open_date_v2_results_note.md
+calibration/C-US/rerun_note_after_locf_patch.md
+```
+
+---
+
+## Citation
+
+Citation metadata is provided in:
+
+```text
+CITATION.cff
+```
+
+Before the freeze release, cite the repository URL and commit hash.
+
+After freeze, cite the release DOI once available.
+
+When reusing snapshot data, preserve:
+
+```text
+snapshot_id
+code_git_commit
+manifest hash
+snapshot_status
+```
+
+---
+
+## License
+
+Software code is released under the MIT License.
+
+Repository-created documentation, metadata, computed archive outputs, manifests, calibration notes, and derived C-US archive records are released under the data license described in:
+
+```text
+LICENSE-DATA.md
+```
+
+Raw upstream observations remain subject to their original provider terms.
+
+---
+
+## AI Assistance Disclosure
+
+The project design, methodological decisions, verification responsibility, and final research interpretation remain the responsibility of the author.
+
+AI systems were used as research and implementation assistants for code drafting, debugging, documentation, review, and test design.
+
+Assistance included:
+
+```text
+Anthropic Claude models — architecture discussion, code drafting, test design, diagnostic review
+OpenAI GPT-5.5 models — design review, code review, bug diagnosis, documentation drafting, testing guidance
+```
+
+AI assistance does not replace author responsibility for final validation.
+
+---
+
+## Author
+
+Junwon Lee
+
+Independent researcher / undergraduate researcher
+
+GitHub: `Junwon03`
+
+---
+
+## Disclaimer
+
+This archive is a research record.
+
+Nothing in this repository constitutes investment advice, trading advice, portfolio allocation advice, or risk-management advice.
