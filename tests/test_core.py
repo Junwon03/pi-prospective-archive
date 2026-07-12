@@ -217,6 +217,48 @@ def test_episode_yellow_only_never_opens():
     eps = stress.detect_episodes(_sbar(vals), mu, sd)
     assert len(eps) == 0
 
+def test_open_date_attribution_excludes_inherited_episode_from_negative_count():
+    """창 시작 직전에 열린 red episode는 창 안 pass/fail count에서 제외하고 inherited로 공개."""
+    idx = pd.bdate_range("2016-12-20", "2017-02-28")
+    vals = pd.Series(1.0, index=idx)
+    vals.loc["2016-12-20":"2017-01-06"] = 3.5  # 창 시작 전 open, 창 안까지 active
+
+    st = pd.DataFrame({"Sbar_w": vals})
+    res = calibration.open_date_episode_attribution(
+        st,
+        ("2017-01-02", "2017-01-31"),
+        mu=0.0,
+        sigma=1.0,
+        context_days=365,
+    )
+
+    assert res["red_episodes_opened_in_window"] == 0
+    assert res["n_red_episodes"] == 0
+    assert res["n_inherited_active_red_episodes"] == 1
+    assert res["episodes"] == []
+    assert res["inherited_active_episodes"][0][0] < "2017-01-02"
+
+
+def test_open_date_attribution_counts_episode_opened_inside_window():
+    """창 안에서 새로 열린 red episode는 pass/fail count에 포함."""
+    idx = pd.bdate_range("2016-12-20", "2017-02-28")
+    vals = pd.Series(1.0, index=idx)
+    vals.loc["2017-01-10":"2017-01-20"] = 3.5  # 창 안에서 open
+
+    st = pd.DataFrame({"Sbar_w": vals})
+    res = calibration.open_date_episode_attribution(
+        st,
+        ("2017-01-02", "2017-01-31"),
+        mu=0.0,
+        sigma=1.0,
+        context_days=365,
+    )
+
+    assert res["red_episodes_opened_in_window"] == 1
+    assert res["n_red_episodes"] == 1
+    assert res["n_inherited_active_red_episodes"] == 0
+    assert res["episodes"][0][0] == "2017-01-10"
+    assert res["inherited_active_episodes"] == []
 
 # ------------------------------------------------------ 사전등록 강제 (SPEC §5.1)
 
