@@ -43,6 +43,8 @@ Fourth, it avoids the 2015-2016 low-volatility reference issue diagnosed during 
 
 Fifth, it avoids using 2026 dry-run observations to set live thresholds. The 2026 dry-run period is reserved for operational validation before freeze, not for optimizing live constants.
 
+Sixth, the window is not selected to be perfectly flat or artificially quiet. It may contain ordinary non-systemic market disturbances, policy-related volatility, and funding-market noise. This is intentional. The QUIET_2017 diagnosis showed that an excessively low-volatility reference regime can produce a very small sigma and an overly sensitive red threshold. The live reference window is therefore intended to include normal reference-regime disturbances while excluding major systemic crisis windows.
+
 ## Terminology
 
 This window is called a live reference window rather than a quiet window.
