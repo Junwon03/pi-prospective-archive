@@ -1,0 +1,74 @@
+{
+  "subtrack": "C-US",
+  "status": "pre-freeze constants candidate",
+  "target_live_freeze_date": "2026-08-03",
+  "live_stable_window": [
+    "2024-01-01",
+    "2025-12-31"
+  ],
+  "source_raw_file": "calibration/C-US/raw_calibration.csv",
+  "code_git_commit": "88166beef5457064eecc7a5c2a87ab44edeff59c",
+  "selected_method": "Option B: in-window Sbar with 90-observation burn-in",
+  "method": {
+    "mode": "live",
+    "rho": "abs 5-trading-observation change in DFF",
+    "psi": "abs 5-trading-observation change in DCPF3M - DTB3",
+    "omega": "TOTBKCR level, as-of LOCF",
+    "normalization": "channel / P99 over LIVE_STABLE_WINDOW",
+    "live_p99": "P99 computed from transformed raw channels over full LIVE_STABLE_WINDOW",
+    "S": "rho_hat * psi_hat * omega_hat",
+    "Sbar_w": "90-trading-observation trailing rolling mean of S",
+    "live_mu_sigma": "mean and sample standard deviation of Sbar_w computed inside LIVE_STABLE_WINDOW after 90-observation burn-in"
+  },
+  "live_p99": {
+    "rho": 0.25,
+    "psi": 0.1999999999999993,
+    "omega": 18958.8656
+  },
+  "live_mu_sigma": {
+    "mu": 0.03397769653160021,
+    "sigma": 0.038047420246019654
+  },
+  "thresholds": {
+    "yellow": 0.11007253702363952,
+    "red": 0.14811995726965918
+  },
+  "diagnostics": {
+    "channel_rows_total": 7451,
+    "stable_channel_rows": 426,
+    "stable_sbar_nonnull_rows": 337,
+    "stable_sbar_start": "2024-06-26",
+    "stable_sbar_end": "2025-12-31",
+    "stable_S_min": 0.0,
+    "stable_S_max": 1.599655737313748,
+    "stable_Sbar_min": 0.0,
+    "stable_Sbar_max": 0.11110279413728984,
+    "stable_yellow_days": 34,
+    "stable_red_days": 0
+  },
+  "option_comparison": {
+    "option_a_full_history_trailing_sbar": {
+      "rows": 426,
+      "start": "2024-01-09",
+      "end": "2025-12-31",
+      "mu": 0.026879069791430208,
+      "sigma": 0.036547419284784013,
+      "yellow": 0.09997390836099823,
+      "red": 0.13652132764578226,
+      "yellow_days": 35,
+      "red_days": 0
+    },
+    "option_b_in_window_sbar_burn_in_selected": {
+      "rows": 337,
+      "start": "2024-06-26",
+      "end": "2025-12-31",
+      "mu": 0.03397769653160021,
+      "sigma": 0.038047420246019654,
+      "yellow": 0.11007253702363952,
+      "red": 0.14811995726965918,
+      "yellow_days": 34,
+      "red_days": 0
+    }
+  },
+  "audit_position": "Option B is selected because LIVE_MU_SIGMA is estimated entirely within the 2024-2025 live reference window after excluding the 90-observation Sbar warm-up period. This avoids carrying 2023 information into the threshold estimation."
+}
