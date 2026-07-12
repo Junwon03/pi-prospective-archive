@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this archive, please cite it using the metadata from this file."
+title: "pi-prospective-archive: C-US Prospective Financial Stress Archive"
+type: dataset
+authors:
+  - family-names: Lee
+    given-names: Junwon
+repository-code: "https://github.com/Junwon03/pi-prospective-archive"
+abstract: >-
+  A prospective, versioned, append-only archive for U.S. credit and bank-sector
+  stress monitoring. The C-US subtrack records raw source observations,
+  computed stress channels, alert summaries, metadata, and manifest hashes under
+  a fixed pre-freeze diagnostic protocol.
+keywords:
+  - systemic risk
+  - financial stress
+  - credit markets
+  - prospective archive
+  - reproducible research
+  - data descriptor
+  - open science
+license: MIT
+version: "pre-freeze"
+date-released: "2026-08-03"
