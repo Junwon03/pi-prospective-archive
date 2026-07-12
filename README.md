@@ -29,6 +29,8 @@ pi-prospective-archive
 
 Prospective 증거는 각 subtrack의 SPEC freeze 시점부터만 인정됩니다. freeze 이전의 모든 기록(dry_run, calibration)은 시운전·적합성 점검이며 prospective 증거로 계산되지 않습니다. 이 원칙은 SPEC 문서에 명문화되어 있습니다.
 
+-8월 1일부터 아카이브 실가동이 목표 입니다.-
+
 핵심 설계 원칙
 
 
@@ -87,10 +89,7 @@ python -m pytest -q                    # 전체 불변량 테스트
 
 
 Anthropic Claude Fable 5 — 아키텍처 설계 지원, 코드 작성, 테스트 스위트 구축
-OpenAI GPT-5.5 Pro — 설계 검수, 결함 탐지, 코드 패치
-
-
-두 모델의 산출물은 상호 교차 검증을 거쳤으며, 모든 설계 판단과 채택 여부는 저자가 결정했습니다.
+OpenAI GPT-5.5 Pro — 설계 검수, 결함 탐지, 코드 패치, 코드작성, 테스트 스위트 구축
 
 
 This archive is a research record. Nothing in this repository constitutes investment advice.
