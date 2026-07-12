@@ -19,6 +19,6 @@ keywords:
   - reproducible research
   - data descriptor
   - open science
-license: MIT
+license: "MIT AND CC-BY-4.0"
 version: "pre-freeze"
 date-released: "2026-08-03"
