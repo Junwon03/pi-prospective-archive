@@ -6,6 +6,11 @@
 - 전면 공개: pass/fail만이 아니라 Sep(Π), Sep(S̄), max|r|, episode 수,
   결측률 raw 결과를 전부 산출·저장
 - event-specific P99 (§2.2) — live frozen P99와 절대 혼용 금지
+
+v2 scoring addendum:
+- episode identity는 open date 기준(common C6)
+- calibration pass/fail은 evaluation window 안에서 새로 open한 red episode만 count
+- window 시작 전에 이미 열려 있던 inherited active red episode는 별도 disclosure로 기록
 """
 from __future__ import annotations
 
@@ -13,6 +18,11 @@ import pandas as pd
 
 from . import channels as ch
 from . import config, stress
+
+
+EPISODE_CONTEXT_DAYS = 365
+SCORING_WINDOW_SLICED_V1 = "window_sliced_v1"
+SCORING_OPEN_DATE_V2 = "open_date_attribution_v2"
 
 
 def missingness_report(raw: dict[str, pd.Series], start: str, end: str) -> dict:
@@ -34,7 +44,97 @@ def stable_max_corr(chan: pd.DataFrame, start: str, end: str) -> float:
     return float(max(vals))
 
 
-def run_event(raw: dict[str, pd.Series], event_name: str, mode: str) -> dict:
+def _episode_pair(e: stress.Episode) -> tuple[str, str | None]:
+    return (
+        str(e.open_date.date()),
+        str(e.close_date.date()) if e.close_date is not None else None,
+    )
+
+
+def _episode_overlaps_window(e: stress.Episode, start: pd.Timestamp, end: pd.Timestamp) -> bool:
+    """Episode가 평가창과 겹치는지 판정.
+
+    close_date=None은 still-open으로 간주한다.
+    """
+    close = e.close_date if e.close_date is not None else pd.Timestamp.max
+    return e.open_date <= end and close >= start
+
+
+def open_date_episode_attribution(
+    stress_df: pd.DataFrame,
+    eval_window: tuple[str, str],
+    mu: float,
+    sigma: float,
+    context_days: int = EPISODE_CONTEXT_DAYS,
+) -> dict:
+    """Open-date episode attribution (scoring addendum v1).
+
+    기존 v1 하네스는 evaluation window만 잘라 episode detection을 수행했다.
+    이 경우 window 시작 전에 이미 열린 episode가 window 첫날에 새로 열린 것처럼
+    오귀속될 수 있다. v2는 충분한 context window에서 episode를 먼저 찾은 뒤,
+    open_date가 evaluation window 안에 있는 episode만 primary pass/fail count로 센다.
+
+    window 시작 전에 열린 상태로 evaluation window와 겹치는 episode는
+    inherited_active로 별도 공개한다.
+    """
+    eval_start = pd.Timestamp(eval_window[0])
+    eval_end = pd.Timestamp(eval_window[1])
+    context_start = eval_start - pd.Timedelta(days=context_days)
+    context_end = eval_end + pd.Timedelta(days=context_days)
+
+    context_sbar = stress_df.loc[context_start:context_end, "Sbar_w"]
+    context_episodes = stress.detect_episodes(context_sbar, mu, sigma)
+
+    opened = [
+        e for e in context_episodes
+        if eval_start <= e.open_date <= eval_end
+    ]
+    inherited = [
+        e for e in context_episodes
+        if e.open_date < eval_start and _episode_overlaps_window(e, eval_start, eval_end)
+    ]
+
+    return {
+        "scoring_method": SCORING_OPEN_DATE_V2,
+        "episode_context_days": context_days,
+        "episode_context_window": (
+            str(context_start.date()),
+            str(context_end.date()),
+        ),
+        "red_episodes_opened_in_window": len(opened),
+        "n_red_episodes": len(opened),
+        "episodes": [_episode_pair(e) for e in opened],
+        "n_inherited_active_red_episodes": len(inherited),
+        "inherited_active_episodes": [_episode_pair(e) for e in inherited],
+        "all_context_episodes": [_episode_pair(e) for e in context_episodes],
+    }
+
+
+def window_sliced_episode_attribution(
+    stress_df: pd.DataFrame,
+    eval_window: tuple[str, str],
+    mu: float,
+    sigma: float,
+) -> dict:
+    """Original v1 window-sliced attribution.
+
+    v1 결과를 보존하기 위해 기존 방식도 명시적으로 남긴다.
+    """
+    eval_sbar = stress_df.loc[eval_window[0]:eval_window[1], "Sbar_w"]
+    episodes = stress.detect_episodes(eval_sbar, mu, sigma)
+    return {
+        "scoring_method": SCORING_WINDOW_SLICED_V1,
+        "n_red_episodes": len(episodes),
+        "episodes": [_episode_pair(e) for e in episodes],
+    }
+
+
+def run_event(
+    raw: dict[str, pd.Series],
+    event_name: str,
+    mode: str,
+    scoring_method: str = SCORING_WINDOW_SLICED_V1,
+) -> dict:
     """단일 calibration 사건 실행 → raw 결과 dict (전면 공개용)."""
     ev = config.CALIBRATION_EVENTS[event_name]
     for key in ("stable", "control", "crisis"):
@@ -46,6 +146,8 @@ def run_event(raw: dict[str, pd.Series], event_name: str, mode: str) -> dict:
             )
     if mode not in ev["modes"]:
         raise ValueError(f"{event_name} does not allow mode={mode}")
+    if scoring_method not in (SCORING_WINDOW_SLICED_V1, SCORING_OPEN_DATE_V2):
+        raise ValueError(f"unknown scoring_method: {scoring_method}")
 
     chan = ch.build_credit_channels(raw, mode=mode)
 
@@ -61,8 +163,26 @@ def run_event(raw: dict[str, pd.Series], event_name: str, mode: str) -> dict:
     mu = float(ctrl_sbar.mean()) if len(ctrl_sbar) else float("nan")
     sd = float(ctrl_sbar.std(ddof=1)) if len(ctrl_sbar) > 1 else float("nan")
 
-    eval_win = st.loc[ev["crisis"][0]:ev["crisis"][1], "Sbar_w"]
-    episodes = stress.detect_episodes(eval_win, mu, sd) if sd == sd else []
+    if sd == sd:
+        if scoring_method == SCORING_OPEN_DATE_V2:
+            episode_info = open_date_episode_attribution(st, ev["crisis"], mu, sd)
+        else:
+            episode_info = window_sliced_episode_attribution(st, ev["crisis"], mu, sd)
+    else:
+        episode_info = {
+            "scoring_method": scoring_method,
+            "n_red_episodes": 0,
+            "episodes": [],
+            "episode_detection_note": "sigma_control is NaN; episode detection skipped",
+        }
+        if scoring_method == SCORING_OPEN_DATE_V2:
+            episode_info.update({
+                "episode_context_days": EPISODE_CONTEXT_DAYS,
+                "red_episodes_opened_in_window": 0,
+                "n_inherited_active_red_episodes": 0,
+                "inherited_active_episodes": [],
+                "all_context_episodes": [],
+            })
 
     # ---- sensitivity: DCPF3M − DGS3MO (SPEC §1.1 — 기록 전용, passfail 미사용) ----
     sensitivity = None
@@ -91,10 +211,7 @@ def run_event(raw: dict[str, pd.Series], event_name: str, mode: str) -> dict:
         **sep,
         "mu_control": mu,
         "sigma_control": sd,
-        "n_red_episodes": len(episodes),
-        "episodes": [(str(e.open_date.date()),
-                      str(e.close_date.date()) if e.close_date is not None else None)
-                     for e in episodes],
+        **episode_info,
         "stable_max_abs_corr": stable_max_corr(chan, *ev["stable"]),
         "sensitivity_DCPF3M_minus_DGS3MO": sensitivity,
         "missingness": missingness_report(raw, ev["stable"][0], ev["crisis"][1]),
