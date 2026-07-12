@@ -31,12 +31,26 @@
       "Sep_Sbar": 9.713868255968652,
       "mu_control": 0.056567036423571276,
       "sigma_control": 0.032291946840762885,
-      "scoring_method": "window_sliced_v1",
+      "scoring_method": "open_date_attribution_v2",
+      "episode_context_days": 365,
+      "episode_context_window": [
+        "2004-01-06",
+        "2010-03-31"
+      ],
+      "red_episodes_opened_in_window": 1,
       "n_red_episodes": 1,
       "episodes": [
         [
           "2007-08-14",
-          null
+          "2009-06-18"
+        ]
+      ],
+      "n_inherited_active_red_episodes": 0,
+      "inherited_active_episodes": [],
+      "all_context_episodes": [
+        [
+          "2007-08-14",
+          "2009-06-18"
         ]
       ],
       "stable_max_abs_corr": 0.17601404922579214,
@@ -111,12 +125,26 @@
       "Sep_Sbar": 28.620023181623157,
       "mu_control": 0.028540078474196467,
       "sigma_control": 0.014468063080596482,
-      "scoring_method": "window_sliced_v1",
+      "scoring_method": "open_date_attribution_v2",
+      "episode_context_days": 365,
+      "episode_context_window": [
+        "2019-01-01",
+        "2021-06-30"
+      ],
+      "red_episodes_opened_in_window": 1,
       "n_red_episodes": 1,
       "episodes": [
         [
           "2020-03-05",
-          null
+          "2020-10-09"
+        ]
+      ],
+      "n_inherited_active_red_episodes": 0,
+      "inherited_active_episodes": [],
+      "all_context_episodes": [
+        [
+          "2020-03-05",
+          "2020-10-09"
         ]
       ],
       "stable_max_abs_corr": 0.39794243394530593,
@@ -191,12 +219,26 @@
       "Sep_Sbar": 36.49100993188496,
       "mu_control": 0.019645105090424355,
       "sigma_control": 0.006189555251576908,
-      "scoring_method": "window_sliced_v1",
-      "n_red_episodes": 1,
-      "episodes": [
+      "scoring_method": "open_date_attribution_v2",
+      "episode_context_days": 365,
+      "episode_context_window": [
+        "2022-01-01",
+        "2024-06-29"
+      ],
+      "red_episodes_opened_in_window": 0,
+      "n_red_episodes": 0,
+      "episodes": [],
+      "n_inherited_active_red_episodes": 1,
+      "inherited_active_episodes": [
         [
-          "2023-01-04",
-          null
+          "2022-03-17",
+          "2024-01-22"
+        ]
+      ],
+      "all_context_episodes": [
+        [
+          "2022-03-17",
+          "2024-01-22"
         ]
       ],
       "stable_max_abs_corr": 0.18892437393940337,
@@ -271,9 +313,23 @@
       "Sep_Sbar": 0.567009573367925,
       "mu_control": 0.028540078474196467,
       "sigma_control": 0.014468063080596482,
-      "scoring_method": "window_sliced_v1",
+      "scoring_method": "open_date_attribution_v2",
+      "episode_context_days": 365,
+      "episode_context_window": [
+        "2018-01-01",
+        "2021-02-28"
+      ],
+      "red_episodes_opened_in_window": 0,
       "n_red_episodes": 0,
       "episodes": [],
+      "n_inherited_active_red_episodes": 0,
+      "inherited_active_episodes": [],
+      "all_context_episodes": [
+        [
+          "2020-03-05",
+          "2020-10-09"
+        ]
+      ],
       "stable_max_abs_corr": 0.39794243394530593,
       "sensitivity_DCPF3M_minus_DGS3MO": {
         "variant": "DCPF3M_minus_DGS3MO",
@@ -346,12 +402,34 @@
       "Sep_Sbar": 2.3110936562782953,
       "mu_control": 0.011535383214277987,
       "sigma_control": 0.010238094297203964,
-      "scoring_method": "window_sliced_v1",
-      "n_red_episodes": 1,
-      "episodes": [
+      "scoring_method": "open_date_attribution_v2",
+      "episode_context_days": 365,
+      "episode_context_window": [
+        "2016-01-02",
+        "2018-12-31"
+      ],
+      "red_episodes_opened_in_window": 0,
+      "n_red_episodes": 0,
+      "episodes": [],
+      "n_inherited_active_red_episodes": 1,
+      "inherited_active_episodes": [
         [
-          "2017-01-02",
+          "2016-12-16",
           "2017-08-24"
+        ]
+      ],
+      "all_context_episodes": [
+        [
+          "2016-12-16",
+          "2017-08-24"
+        ],
+        [
+          "2018-01-08",
+          "2018-08-10"
+        ],
+        [
+          "2018-12-21",
+          null
         ]
       ],
       "stable_max_abs_corr": 0.48810187510384145,
@@ -400,8 +478,8 @@
     "positive_pass": 3,
     "positive_total": 3,
     "positive_criterion": true,
-    "negative_zero_red": false,
+    "negative_zero_red": true,
     "nonredundancy_ok": true,
-    "overall_pass": false
+    "overall_pass": true
   }
 }

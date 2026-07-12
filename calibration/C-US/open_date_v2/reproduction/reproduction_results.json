@@ -31,12 +31,26 @@
       "Sep_Sbar": 11.214892590684137,
       "mu_control": 0.048685335995069745,
       "sigma_control": 0.028931797117040345,
-      "scoring_method": "window_sliced_v1",
+      "scoring_method": "open_date_attribution_v2",
+      "episode_context_days": 365,
+      "episode_context_window": [
+        "2004-01-06",
+        "2010-03-31"
+      ],
+      "red_episodes_opened_in_window": 1,
       "n_red_episodes": 1,
       "episodes": [
         [
           "2007-08-13",
-          null
+          "2009-04-10"
+        ]
+      ],
+      "n_inherited_active_red_episodes": 0,
+      "inherited_active_episodes": [],
+      "all_context_episodes": [
+        [
+          "2007-08-13",
+          "2009-04-10"
         ]
       ],
       "stable_max_abs_corr": 0.13909841769701173,
@@ -105,12 +119,30 @@
       "Sep_Sbar": 1.199415046616043,
       "mu_control": 0.030556557805944483,
       "sigma_control": 0.018608833346126265,
-      "scoring_method": "window_sliced_v1",
+      "scoring_method": "open_date_attribution_v2",
+      "episode_context_days": 365,
+      "episode_context_window": [
+        "2018-01-01",
+        "2021-02-28"
+      ],
+      "red_episodes_opened_in_window": 1,
       "n_red_episodes": 1,
       "episodes": [
         [
           "2019-11-04",
           "2020-02-05"
+        ]
+      ],
+      "n_inherited_active_red_episodes": 0,
+      "inherited_active_episodes": [],
+      "all_context_episodes": [
+        [
+          "2019-11-04",
+          "2020-02-05"
+        ],
+        [
+          "2020-03-04",
+          "2020-08-10"
         ]
       ],
       "stable_max_abs_corr": 0.3054878747804894,
