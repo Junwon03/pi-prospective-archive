@@ -45,10 +45,18 @@ EPISODE_COOLDOWN_TRADING_DAYS = 10
 HORIZON_MONTHS = 6
 TAU0 = 1.0 / 365.0              # 거래일 관측치당 (foundation 동일)
 
+# --------------------------------------------------- ingestion
+# Shared fetch warm-up buffer.
+# Used by daily ingestion and audit reproducibility checks.
+FETCH_BUFFER_DAYS = 300
+
+# Planned freeze date before LIVE_FREEZE_DATE is populated.
+# This is not a frozen runtime constant.
+PROSPECTIVE_TARGET_FREEZE_DATE = "2026-08-03"
+
 # --------------------------------------------------------------- outcome
 # SPEC §4 (calibration 이전 확정 — 근거는 SPEC §4.1)
 COLLAPSE_DRAWDOWN = 0.25
-CORRECTION_DRAWDOWN = 0.12
 
 # ---------------------------------------------------- calibration events
 # SPEC §5.1 — window가 "고정 ✓"인 사건은 foundation 공개 값 상속.
