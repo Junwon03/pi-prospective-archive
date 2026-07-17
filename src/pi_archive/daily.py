@@ -25,7 +25,7 @@ from . import channels as ch
 from . import config, fetch_fred, stress, writer
 
 # warm-up 여유: 90 거래일(S̄_w) + 5(Δ) + LOCF gap → 300 calendar days면 넉넉
-FETCH_BUFFER_DAYS = 300
+FETCH_BUFFER_DAYS = config.FETCH_BUFFER_DAYS
 
 REQUIRED_SERIES = list(config.FRED_SERIES)  # DFF, DCPF3M, DTB3, TOTBKCR
 
