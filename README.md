@@ -306,6 +306,7 @@ LICENSE
 LICENSE-DATA.md
 requirements.lock
 run_calibration.py
+run_live_constants.py
 run_snapshot.py
 run_health_check.py
 ```
@@ -550,9 +551,10 @@ AI assistance does not replace author responsibility for final validation.
 
 Junwon Lee
 
-Independent researcher / undergraduate researcher
+Independent researcher
 
 GitHub: `Junwon03`
+Gmail: herrang0311@dankook.ac.kr, herrang0311@gmail.com
 
 ---
 
