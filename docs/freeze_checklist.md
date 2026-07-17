@@ -45,6 +45,7 @@ Expected test result:
 - [ ] calibration/C-US/live_reference_window_v1.md
 - [ ] calibration/C-US/live_freeze_constants_v1.json
 - [ ] calibration/C-US/live_freeze_constants_v1.md
+- [ ] calibration/C-US/window_sensitivity_analysis_v1.md
 - [ ] docs/data_dictionary.md
 - [ ] docs/versioning_policy.md
 - [ ] docs/freeze_checklist.md
@@ -130,6 +131,7 @@ Before freeze, src/pi_archive/config.py must be updated with:
 After patch:
 
 - [ ] python -m pytest -q passes
+- [ ] python run_live_constants.py passes before commit
 - [ ] config constants match live_freeze_constants_v1
 - [ ] official snapshot tests still pass
 
@@ -141,7 +143,7 @@ After freeze:
 - [ ] meta.json mu_sigma_used is not null
 - [ ] meta.json p99_used equals LIVE_P99
 - [ ] meta.json freeze_date equals LIVE_FREEZE_DATE
-- [ ] Pi_since_freeze begins at LIVE_FREEZE_DATE
+- [ ] Pi_since_freeze anchor is LIVE_FREEZE_DATE
 - [ ] healthcheck passes
 
 ## 9. Release and DOI
