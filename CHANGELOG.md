@@ -4,6 +4,25 @@ All notable changes to the C-US prospective archive are documented here.
 
 This changelog is an audit-oriented summary. Full details are preserved in the repository history, calibration notes, SPEC files, snapshot metadata, and documentation files.
 
+## [Pre-freeze] 2026-07-17
+
+### Added
+
+- Added window sensitivity robustness analysis (post-selection, pre-freeze
+  disclosure): run_window_sensitivity.py and
+  calibration/C-US/window_sensitivity_analysis_v1.md. Exhaustive
+  rule-generated candidate windows (1997-2025); threshold regime-dependence
+  and operational robustness disclosed; pipeline equivalence machine-verified.
+
+### Changed
+
+- Centralized FETCH_BUFFER_DAYS in `src/pi_archive/config.py` as a
+  single-source ingestion parameter while preserving existing behavior.
+- Added `PROSPECTIVE_TARGET_FREEZE_DATE` as planning/documentation metadata
+  only; runtime prospective anchoring remains controlled by `LIVE_FREEZE_DATE`.
+- These config changes were committed on 2026-07-17 and are
+  documented here according to their actual commit timing for audit clarity.
+
 ## [Pre-freeze] 2026-07-13
 
 ### Added
@@ -24,10 +43,6 @@ This changelog is an audit-oriented summary. Full details are preserved in the r
 - Added live freeze constants candidate:
   - calibration/C-US/live_freeze_constants_v1.json
   - calibration/C-US/live_freeze_constants_v1.md
-- Centralized FETCH_BUFFER_DAYS in `src/pi_archive/config.py` as a
-  single-source ingestion parameter while preserving existing behavior.
-- Added `PROSPECTIVE_TARGET_FREEZE_DATE` as planning/documentation metadata only;
-  runtime prospective anchoring remains controlled by `LIVE_FREEZE_DATE`.
 
 ### Fixed
 
