@@ -24,6 +24,10 @@ This changelog is an audit-oriented summary. Full details are preserved in the r
 - Added live freeze constants candidate:
   - calibration/C-US/live_freeze_constants_v1.json
   - calibration/C-US/live_freeze_constants_v1.md
+- Centralized FETCH_BUFFER_DAYS in `src/pi_archive/config.py` as a
+  single-source ingestion parameter while preserving existing behavior.
+- Added `PROSPECTIVE_TARGET_FREEZE_DATE` as planning/documentation metadata only;
+  runtime prospective anchoring remains controlled by `LIVE_FREEZE_DATE`.
 
 ### Fixed
 
