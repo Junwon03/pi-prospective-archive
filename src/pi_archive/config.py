@@ -48,10 +48,13 @@ TAU0 = 1.0 / 365.0              # 거래일 관측치당 (foundation 동일)
 # --------------------------------------------------- ingestion
 # Shared fetch warm-up buffer.
 # Used by daily ingestion and audit reproducibility checks.
+# This is an operational data retrieval parameter and does not define
+# model structure, calibration constants, or prospective evaluation rules.
 FETCH_BUFFER_DAYS = 300
 
-# Planned freeze date before LIVE_FREEZE_DATE is populated.
-# This is not a frozen runtime constant.
+# Planned freeze target date for scheduling and documentation only.
+# This value does not define the prospective evaluation anchor.
+# The actual anchor is LIVE_FREEZE_DATE, which is set only in the freeze commit.
 PROSPECTIVE_TARGET_FREEZE_DATE = "2026-08-03"
 
 # --------------------------------------------------------------- outcome
