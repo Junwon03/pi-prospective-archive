@@ -284,6 +284,7 @@ calibration/C-US/
   outcome_definition_v1.md
   freeze_protocol_v1.md
   dry_run_stability_note_v1.md
+  window_sensitivity_analysis_v1.md
   live/
   reproduction/
   open_date_v2/
@@ -307,6 +308,7 @@ LICENSE-DATA.md
 requirements.lock
 run_calibration.py
 run_live_constants.py
+run_window_sensitivity.py
 run_snapshot.py
 run_health_check.py
 ```
@@ -477,6 +479,7 @@ calibration/C-US/dry_run_stability_note_v1.md
 calibration/C-US/outcome_definition_v1.md
 calibration/C-US/live_reference_window_v1.md
 calibration/C-US/live_freeze_constants_v1.md
+calibration/C-US/window_sensitivity_analysis_v1.md
 ```
 
 Calibration audit files:
