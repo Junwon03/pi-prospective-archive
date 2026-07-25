@@ -111,14 +111,15 @@ max |Sbar_full - Sbar_buffer300| = 6.939e-18
 ## Interpretation
 
 1. **Threshold magnitude is baseline-regime dependent.** Red thresholds
-   across candidates range from 0.0389 to 0.1644. This dependence is
+   range from 0.0389 to 0.1732 across all candidates, and from 0.0389 to
+   0.1644 among crisis-overlap-free candidates. This dependence is
    expected: stress distributions differ across monetary and volatility
    regimes. The candidate window did not produce the highest threshold among
    candidates without crisis overlap (2001-2002 produced 0.1644 versus the candidate's 0.1481).
 
 2. **Low-volatility-regime baselines produce hair-trigger behavior.**
    Windows drawn from low-rate, low-volatility regimes (the post-dot-com
-   easing period 2002-2003 and the post-GFC era 2009-2016) yield red
+   easing-era windows 2002-2004 and the post-GFC era 2009-2016) yield red
    thresholds of roughly 0.039-0.112 and would classify 29-79 of the 115
    trading days of 2026 to date as red. This empirically confirms and
    generalizes the low-volatility-baseline concern documented in the
@@ -133,7 +134,7 @@ max |Sbar_full - Sbar_buffer300| = 6.939e-18
    The current "no alert" state is not unique to the candidate window,
    although alert behavior remains dependent on the reference regime.
 
-5. **Correction record.** An earlier draft of this analysis enumerated
+4. **Correction record.** An earlier draft of this analysis enumerated
    candidates only from 2014 onward. That truncated set supported two claims
    later corrected by exhaustive enumeration: (a) that the candidate window
    produced the highest threshold among eligible candidates, and (b) that
@@ -142,7 +143,7 @@ max |Sbar_full - Sbar_buffer300| = 6.939e-18
    The correction is preserved here deliberately: exhaustive rule-generated
    enumeration is what exposed the limitation of the initial framing.
 
-6. **Implication for the freeze design.** Because threshold magnitude
+5. **Implication for the freeze design.** Because threshold magnitude
    depends on the reference regime, prospective validity cannot come from
    adaptively selecting or re-estimating thresholds; it requires freezing
    the reference regime before future observation and evaluating the frozen
