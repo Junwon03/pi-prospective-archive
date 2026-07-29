@@ -1,0 +1,29 @@
+{
+  "snapshot_id": "2026-07-29T222722Z",
+  "subtrack": "C-US",
+  "spec_version": "SPEC-1.0",
+  "created_at_utc": "2026-07-29T22:27:22.396447+00:00",
+  "code_git_commit": "ff6d79be52152ba79d0a711f9f6c0c6cc79bb65f",
+  "p99_used": {
+    "rho": 0.25,
+    "psi": 0.18039999999999956,
+    "omega": 19740.9801
+  },
+  "mu_sigma_used": null,
+  "freeze_date": "2026-07-29",
+  "spec_common_sha256": "89c42b45f2b3901eb4b088f23b923ac220073f4e793eab9d613609c93327ed2f",
+  "spec_subtrack_sha256": "09e4cdac343b2987d591588ae6e6e3aaea370175e05ca830a6344e681b874f30",
+  "environment_hash": "50f3397e4357a39b6dc27aa6afb36737872de8e0b2aaa2945e2cdf285e40a7da",
+  "snapshot_status": "dry_run",
+  "supersedes": null,
+  "correction_reason": null,
+  "data_sources": [
+    "DCPF3M",
+    "DFF",
+    "DTB3",
+    "TOTBKCR"
+  ],
+  "raw_sha256": "6a5532b8483c8c2eed5ee6fb030a69e9d1b51eed5eda962f352add66d0bf45b6",
+  "computed_sha256": "f6db3e93dcb00fa14a7ca68737b85e729c51b1af04a03fbb8e15dc862a27e866",
+  "alert_sha256": "de4e5e6cc25210fc0de53117e8e5825319177a85eb3905ae1892fd763d54ef0d"
+}
