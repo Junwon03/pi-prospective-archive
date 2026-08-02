@@ -17,10 +17,16 @@ def _repo_with_specs(tmp_path):
     return tmp_path
 
 
-def test_make_snapshot_dry_run_before_freeze(tmp_path):
+def test_make_snapshot_dry_run_before_freeze(tmp_path, monkeypatch):
     """freeze 전(LIVE_* 미설정) → 자동으로 dry_run 신분, 임시 P99가 meta에 박제,
     manifest 검증 통과."""
-    assert not daily.frozen_constants_ready()  # 기본 config: 전부 None
+
+    monkeypatch.setattr(config, "LIVE_P99", None)
+    monkeypatch.setattr(config, "LIVE_MU_SIGMA", None)
+    monkeypatch.setattr(config, "LIVE_FREEZE_DATE", None)
+
+    assert not daily.frozen_constants_ready()
+
     raw = make_raw()
     repo = _repo_with_specs(tmp_path)
     run_dir = daily.make_snapshot(
@@ -29,8 +35,9 @@ def test_make_snapshot_dry_run_before_freeze(tmp_path):
 
     meta = json.loads((run_dir / "meta.json").read_text())
     assert meta["snapshot_status"] == "dry_run"
-    assert meta["p99_used"]["rho"] > 0          # 임시 P99 투명 박제
+    assert meta["p99_used"]["rho"] > 0
     assert meta["mu_sigma_used"] is None
+
     from pi_archive.writer import verify_snapshot
     assert verify_snapshot(run_dir)
 
@@ -62,9 +69,9 @@ def test_make_snapshot_requires_spec_files(tmp_path):
 
 
 def test_observation_start_bounded():
-    """fetch 창이 유계인지 — freeze 미설정 시 오늘 기준 버퍼."""
+    """fetch 창이 유계인지 — freeze 후 freeze date 기준 버퍼."""
     start = daily.observation_start(today=dt.date(2026, 8, 15))
-    assert start == (dt.date(2026, 8, 15)
+    assert start == (dt.date.fromisoformat(config.LIVE_FREEZE_DATE)
                      - dt.timedelta(days=daily.FETCH_BUFFER_DAYS)).isoformat()
 
 
@@ -129,3 +136,19 @@ def test_health_no_snapshots_yet_fails_after_archive_started_marker(tmp_path):
 def test_current_git_head_returns_none_outside_git_repo(tmp_path):
     """로컬 임시 dry_run처럼 git repo가 아니면 None을 반환하고 예외를 내지 않는다."""
     assert daily.current_git_head(tmp_path) is None
+
+
+def test_frozen_constants_match_json():
+    import json
+    from pathlib import Path
+    from pi_archive import config
+
+    ref = json.loads(
+        Path("calibration/C-US/live_freeze_constants_v1.json")
+        .read_text()
+    )
+
+    assert config.LIVE_P99 == ref["live_p99"]
+    assert config.LIVE_MU_SIGMA == ref["live_mu_sigma"]
+    assert tuple(config.LIVE_STABLE_WINDOW) == tuple(ref["live_stable_window"])
+    assert config.LIVE_FREEZE_DATE == "2026-08-03"

@@ -601,12 +601,12 @@ def test_official_snapshot_requires_frozen_constants(tmp_path):
     with pytest.raises(ValueError, match="dry_run"):
         writer.write_snapshot(**kw, snapshot_status="valid")  # mu_sigma 없음
 
-    with pytest.raises(ValueError, match="not frozen yet"):
+    with pytest.raises(ValueError, match="does not match frozen config"):
         writer.write_snapshot(
             **kw,
             snapshot_status="valid",
             mu_sigma={"mu": 0.1, "sigma": 0.05},
-        )  # LIVE_* 미설정
+        )
 
 
 def test_official_snapshot_enforces_config_match(tmp_path, monkeypatch):

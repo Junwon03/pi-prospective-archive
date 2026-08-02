@@ -107,7 +107,17 @@ CALIBRATION_EVENTS = {
 # SPEC §2.1 — calibration 후 숫자 박제. freeze 전까지 None.
 # writer는 snapshot_status가 valid/correction일 때 아래 상수와의 일치를 강제한다
 # (dry_run은 예외 — freeze 이전 시운전 전용, 평가 제외).
-LIVE_STABLE_WINDOW = None          # [TODO] ("YYYY-MM-DD", "YYYY-MM-DD")
-LIVE_P99 = None                    # [TODO] {"rho": float, "psi": float, "omega": float}
-LIVE_MU_SIGMA = None               # [TODO] {"mu": float, "sigma": float}
-LIVE_FREEZE_DATE = None            # [TODO] "YYYY-MM-DD" — freeze commit일 = Π 적분 원점
+LIVE_STABLE_WINDOW = ("2024-01-01", "2025-12-31")
+
+LIVE_P99 = {
+    "rho": 0.25,
+    "psi": 0.1999999999999993,
+    "omega": 18958.8656,
+}
+
+LIVE_MU_SIGMA = {
+    "mu": 0.03397769653160021,
+    "sigma": 0.038047420246019654,
+}
+
+LIVE_FREEZE_DATE = "2026-08-03"
