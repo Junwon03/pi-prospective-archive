@@ -1,6 +1,6 @@
 # pi-prospective-archive
 
-**Pre-freeze prospective archive for the Π Structural Stability framework — C-US subtrack**
+**Frozen prospective archive for the Π Structural Stability framework — C-US subtrack**
 
 This repository is a prospective, versioned, append-only archive for the C-US financial stress subtrack.
 
@@ -14,16 +14,16 @@ This repository is a research record. Nothing in this repository constitutes inv
 
 | Component                   | Status                                       |
 | --------------------------- | -------------------------------------------- |
-| C-US subtrack               | Pre-freeze / dry-run                         |
-| Target valid archive start  | 2026-08-03                                   |
-| Prospective evidence status | Not yet active                               |
+| C-US subtrack               | Frozen v1.0                                  |
+| Freeze date                  | 2026-08-03                                   |
+| Prospective evidence status | Awaiting first valid snapshot                |
 | Current snapshots           | `dry_run` only                               |
 | Calibration                 | v1 and v2 records preserved                  |
 | Primary outcome proxy       | KBE                                          |
 | Secondary market check      | BKX, if openly reproducible                  |
 | Secondary banking outcome   | FDIC failed bank event with assets ≥ USD 10B |
 
-Valid prospective evidence begins only after the C-US freeze commit and release. All dry-run snapshots, calibration outputs, diagnostics, and pre-freeze notes are audit records, not prospective evidence.
+The C-US rule was frozen in commit `68731c6546ebd4845531aac03e1f3be198aab61a` and tagged `c-us-freeze-v1.0` on 2026-08-03. Dry-run snapshots, calibration outputs, diagnostics, and pre-freeze notes remain audit records rather than prospective evidence. Prospective evidence begins with the first post-freeze snapshot recorded as `valid`.
 
 ---
 
@@ -31,7 +31,7 @@ Valid prospective evidence begins only after the C-US freeze commit and release.
 
 This repository is:
 
-* a pre-freeze diagnostic archive for the C-US financial stress subtrack;
+* a frozen prospective archive for the C-US financial stress subtrack;
 * an append-only record of daily source observations and computed stress signals;
 * a reproducible implementation of a fixed, causal stress construction;
 * a time-stamped audit trail for calibration, dry-run validation, implementation fixes, and future valid snapshots;
@@ -93,9 +93,9 @@ LIVE_FREEZE_DATE = 2026-08-03
 
 ---
 
-## Freeze Constants Candidate
+## Frozen Constants
 
-The current pre-freeze candidate constants are recorded in:
+The frozen constants and their pre-freeze derivation record are preserved in:
 
 ```text
 calibration/C-US/live_freeze_constants_v1.json
@@ -108,7 +108,7 @@ Current selected method:
 Option B: in-window Sbar with 90-observation burn-in
 ```
 
-Candidate values:
+Frozen values:
 
 ```text
 LIVE_STABLE_WINDOW = 2024-01-01 to 2025-12-31
@@ -127,7 +127,7 @@ yellow = 0.11007253702363952
 red    = 0.14811995726965918
 ```
 
-These values are not official until copied into `src/pi_archive/config.py` and committed as the freeze commit.
+These values are official for C-US v1.0. They are recorded in `src/pi_archive/config.py` at freeze commit `68731c6546ebd4845531aac03e1f3be198aab61a` and must not be recomputed in response to future outcomes.
 
 ---
 
@@ -405,7 +405,7 @@ python -m pytest -q
 Expected current result:
 
 ```text
-43 passed
+44 passed
 ```
 
 ---
@@ -420,15 +420,13 @@ valid
 correction
 ```
 
-Current status:
+Current archive state:
 
 ```text
-dry_run
+frozen v1.0; dry_run records only; first valid snapshot pending
 ```
 
-Dry-run snapshots are operational validation records and are excluded from prospective evidence.
-
-Valid snapshots begin only after the freeze release.
+Dry-run snapshots are operational validation records and are excluded from prospective evidence. A snapshot becomes prospective evidence only when it is generated after freeze with `snapshot_status = valid` and passes the frozen-constant and integrity checks.
 
 ---
 

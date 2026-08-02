@@ -2,7 +2,7 @@
 
 Project: pi-prospective-archive  
 Subtrack: C-US  
-Status: Pre-freeze data dictionary  
+Status: Frozen v1.0 data dictionary
 Target LIVE_FREEZE_DATE: 2026-08-03
 
 ## Purpose
@@ -441,7 +441,7 @@ These files record:
 - diagnostics
 - Option A/B comparison for Sbar_w threshold estimation
 
-The constants are not official until copied into src/pi_archive/config.py and committed as the freeze commit.
+The constants are official for frozen C-US v1.0 and are recorded in `src/pi_archive/config.py` at commit `68731c6546ebd4845531aac03e1f3be198aab61a`.
 
 ## Outcome Data
 

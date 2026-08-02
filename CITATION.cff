@@ -10,7 +10,7 @@ abstract: >-
   A prospective, versioned, append-only archive for U.S. credit and bank-sector
   stress monitoring. The C-US subtrack records raw source observations,
   computed stress channels, alert summaries, metadata, and manifest hashes under
-  a fixed pre-freeze diagnostic protocol.
+  the frozen C-US v1.0 diagnostic protocol.
 keywords:
   - systemic risk
   - financial stress
@@ -20,5 +20,5 @@ keywords:
   - data descriptor
   - open science
 license: "MIT AND CC-BY-4.0"
-version: "pre-freeze"
+version: "c-us-freeze-v1.0.1"
 date-released: "2026-08-03"

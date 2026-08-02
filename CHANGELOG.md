@@ -4,6 +4,33 @@ All notable changes to the C-US prospective archive are documented here.
 
 This changelog is an audit-oriented summary. Full details are preserved in the repository history, calibration notes, SPEC files, snapshot metadata, and documentation files.
 
+## [c-us-freeze-v1.0.1] - 2026-08-03
+
+### Documentation
+
+- Closed the current C-US SPEC, README, data dictionary, versioning policy, freeze completion record, and citation metadata to reflect the completed v1.0 freeze.
+- Recorded that the first `valid` snapshot and Zenodo DOI remain pending.
+
+### Analytical Status
+
+- No changes to analytical logic, input data, estimands, frozen constants, alert rules, outcome definitions, or numerical outputs.
+
+## [c-us-freeze-v1.0] - 2026-08-03
+
+### Frozen
+
+- Froze the C-US analytical rule and live constants at commit `68731c6546ebd4845531aac03e1f3be198aab61a`.
+- Set `LIVE_STABLE_WINDOW`, `LIVE_P99`, `LIVE_MU_SIGMA`, and `LIVE_FREEZE_DATE` in `src/pi_archive/config.py`.
+- Preserved the v1 calibration failure record and v2 open-date attribution pass record.
+- Verified the repository with `44 passed`.
+- Created release tag `c-us-freeze-v1.0`.
+
+### Prospective Status
+
+- Existing snapshots remain `dry_run` audit records.
+- Prospective evidence begins with the first post-freeze snapshot recorded as `valid`.
+- Zenodo archival and DOI recording remain pending.
+
 ## [Pre-freeze] 2026-07-17
 
 ### Added

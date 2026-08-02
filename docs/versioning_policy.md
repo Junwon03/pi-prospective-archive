@@ -2,7 +2,7 @@
 
 Project: pi-prospective-archive  
 Subtrack: C-US  
-Status: Pre-freeze versioning policy  
+Status: Frozen v1.0 versioning policy
 Target LIVE_FREEZE_DATE: 2026-08-03
 
 ## Purpose
@@ -211,12 +211,12 @@ It may summarize current status, but the authoritative audit records are the SPE
 
 ## Valid Archive Start
 
-The target valid archive start is:
+The frozen archive date is:
 
 2026-08-03
 
-The actual valid start must be documented in:
+The first valid snapshot has not yet been recorded. Its actual start must be documented in:
 
 - config.py
-- freeze release note
+- the freeze or maintenance release note
 - meta.json of the first valid snapshot

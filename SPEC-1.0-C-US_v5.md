@@ -1,7 +1,7 @@
-# SPEC-1.0-C-US — 신용 섹터 (미국) subtrack 헌법 (draft v5)
+# SPEC-1.0-C-US — 신용 섹터 (미국) subtrack 헌법 (frozen v5)
 
 > 따르는 공통 헌법: **SPEC-1.0_common (v4)** — 해당 hash는 각 snapshot의 meta.json에 박제 (manifest는 run 폴더 로컬 파일만, common v4 C10.4)
-> 상태: **DRAFT v5 — 미동결.** 이 파일의 freeze가 곧 C-US prospective 시계의 시작.
+> 상태: **FROZEN v5 (documentation closure).** Analytical rule freeze date: **2026-08-03**; analytical freeze commit: `68731c6546ebd4845531aac03e1f3be198aab61a`; release tag: `c-us-freeze-v1.0`. This document reconciles the pre-freeze TODO fields to values already fixed at the analytical freeze, before the first `valid` snapshot. No analytical rule is changed by this documentation closure.
 > v2 → v3 (치명 결함 2건 수정 + 정밀화):
 > ① **Ω(TOTBKCR) live 정렬을 선형보간 → as-of LOCF로 교체** (선형보간은 미래 관측 필요 = look-ahead. common C4.5 위반이었음)
 > ② **정규화 P99 이원화** — calibration용 event-specific P99 vs live frozen P99 명확 분리
@@ -10,7 +10,7 @@
 > ⑤ calibration window 사전등록 메커니즘 (common C5) 반영 — 2008·repo는 foundation 공개 window 상속으로 즉시 고정
 >
 > v3 → v4: **live Π 정의 = Pi_since_freeze** (적분 원점 = freeze일), computed_status 기록 원칙.
-> v4 → v5 (**정합화 + simplicity pass 수용**): 버전 참조 정정(common v4·DRAFT v5), alert.json 일 단위 기록(episode는 평가 시 유도), 공식 snapshot의 frozen 상수 강제, dry_run 신분 도입, Zenodo 분기 주기 — 모두 common v4 준수. freeze 시 이 파일과 common v4의 hash가 함께 박제된다.
+> v4 → v5 (**정합화 + simplicity pass 수용**): 버전 참조 정정(common v4·frozen v5), alert.json 일 단위 기록(episode는 평가 시 유도), 공식 snapshot의 frozen 상수 강제, dry_run 신분 도입, Zenodo 분기 주기 — 모두 common v4 준수. freeze 시 이 파일과 common v4의 hash가 함께 박제된다.
 > 정체성: 2008 은행·신용 위기 타입 — foundation 최강 검증 세팅(18.6×)의 prospective 후예.
 
 ---
@@ -64,8 +64,8 @@
 ### 2.1 Live archive P99 (freeze 대상)
 | 항목 | 값 |
 |---|---|
-| live stable reference 기간 | `[TODO — 사전 기준: ① NBER 침체 없음 ② 알려진 스트레스 사건 없음 ③ 3채널(live rule) 데이터 존재 ④ calibration 사건과 비중첩. 기준 먼저, 기간 나중.]` |
-| P99 (숫자 박제) | ρ = `[TODO]`, Ψ = `[TODO]`, Ω = `[TODO]` — **live rule(§1.4 LOCF 포함)로 산출한 숫자를 freeze 시 고정, 이후 재계산 없음** |
+| live stable reference 기간 | **2024-01-01 ~ 2025-12-31** — `calibration/C-US/live_reference_window_v1.md`에 사전 결정 근거 보존 |
+| P99 (숫자 박제) | **ρ = 0.25, Ψ = 0.1999999999999993, Ω = 18958.8656** — live rule(§1.4 LOCF 포함)로 산출하여 v1.0 freeze 시 고정; 이후 재계산 없음 |
 | τ₀ | 1/365 (거래일 관측치당) — 확정 ✓ |
 
 ### 2.2 Calibration용 event-specific P99 (prospective evidence 아님)
@@ -84,46 +84,46 @@
 | Red | S̄_w > μ_control + 3σ_control | 확정 ✓ |
 | episode cooldown | **10 거래일** (common C6 골격) | 확정 ✓ |
 | horizon | **6개월** (episode open일 기준) | 확정 ✓ |
-| μ_control, σ_control | `[TODO: live rule로 산출해 숫자 박제]` + 산출 control 기간 `[TODO: §2.1 기준으로 날짜 박제]` | calibration 의존 |
+| μ_control, σ_control | **μ = 0.03397769653160021, σ = 0.038047420246019654**, 산출 reference 기간 **2024-01-01 ~ 2025-12-31**, Option B(in-window S̄ with 90-observation burn-in) | **frozen ✓** |
 | **live Π 정의** | **Pi_since_freeze** — 적분 원점 = 이 SPEC의 freeze일. freeze 이전 날짜의 Π는 정의되지 않음(NaN). | 확정 ✓ (v4) |
 
 **Π 정의 근거 (박제):** raw cumsum은 fetch 시작점에 따라 절대값이 달라져 "같은 날짜의 공식 Π"가 유일하게 정의되지 않는다. 적분 원점을 freeze일로 고정하면 값이 history 시작점과 무관하게 유일해지고, "동결 이후 누적된 스트레스"라는 아카이브의 의미와 정확히 일치한다. (calibration의 Sep 계산은 window 내 합을 직접 쓰므로 이 정의와 무관.)
 
 **근거 (박제):** w = 90은 foundation의 pseudo-prospective 분석(2008 케이스, 90-d rolling S̄, 2σ threshold)과 동일 구조 — 논문과 아카이브의 방법론 연속성. 2σ/3σ 2단계는 yellow(주의)/red(episode 개시) 구분이며 outcome 판정은 red episode에만 연동(common C7).
 
-## 4. Outcome (확정 — 지수 소스·FDIC 임계만 calibration 의존)
+## 4. Outcome (frozen v1.0)
 
 | | 정의 | 상태 |
 |---|---|---|
-| **Primary** | 미국 은행주 지수 peak-to-trough drawdown | 구조 확정 ✓ / 지수 소스 `[TODO — §4.2]` |
+| **Primary** | **KBE (SPDR S&P Bank ETF)** open-date anchored 6개월 forward drawdown | **frozen ✓** |
 | collapse | drawdown ≥ **25%** | 확정 ✓ |
 | correction | **12% ≤ drawdown < 25%** | 확정 ✓ |
 | quiet | < 12% | 확정 ✓ |
-| **Secondary** | FDIC 은행 파산 이벤트 — "horizon 내 총자산 $X 이상 파산 발생" | 구조 확정 ✓ / $X `[TODO: FDIC 과거 분포 확인 후 확정 — 출발 prior $10B (SVB급 포착 + 소형 상시파산 배제), calibration에서 분포로 검증]` |
+| **Secondary** | FDIC 은행 파산 이벤트 — horizon 내 **reported total assets ≥ USD 10B**인 파산 발생 | **frozen ✓** |
 
 ### 4.1 임계 근거 (박제 — calibration 이전 확정)
 > Collapse/correction thresholds (25% / 12%) were fixed **prior to any calibration run**. Rationale: bank-sector equity indices exhibit higher volatility than broad-market indices, so the conventional 20% bear-market threshold is raised to 25% for collapse; the correction floor (12%) is set proportionally above the broad-market convention (10%). These thresholds are frozen and are not adjusted in response to calibration results.
 
 ### 4.2 Outcome 소스 요구조건 (common C7 분리 기준 적용)
 - 입력 채널: 매일 무인 fetch 생존 필수. **outcome 시리즈: 평가 시점 공개 재구성 가능이면 충분** (매일 snapshot 권장, freeze 요건 아님).
-- primary 지수 후보: KBW Nasdaq Bank (BKX) / S&P Banks Select Industry 등 — 공개 재구성 가능성 기준으로 calibration 시 확정 `[TODO]`
+- primary 지수: **KBE (SPDR S&P Bank ETF)**. Secondary market check는 **BKX**, 공개 재현 가능한 소스가 있을 때만 사용. 세부 가격 convention과 평가 규칙은 `calibration/C-US/outcome_definition_v1.md`에 고정.
 - 배제 근거(박제): credit spread spike는 입력 Ψ와 영역 중첩(순환성)으로 primary 배제. 은행주 지수는 비입력·시장가격·일별 판정 가능. FDIC 파산은 객관적이나 희귀·이진적이라 secondary.
 - 순환성 평가: 입력(금리·spread·은행신용) vs outcome(은행주 가격·파산 이벤트) — 다른 시리즈·다른 영역, 순환성 낮음.
 
-## 5. Pre-freeze calibration
+## 5. Pre-freeze calibration (completed audit record)
 
 > common C5 적용: usability check, 성능 증거 아님. **전면 공개**: 모든 사건의 Sep(Π), Sep(S̄), stable max|r|, red episode 수, 결측률 raw 결과를 `calibration/C-US/`에 전부 저장.
-> **사전등록:** 아래 표의 window가 확정되면 `calibration/C-US/calibration_plan.md`로 **실행 전 commit** — timestamp가 "돌리기 전 고정"의 증거. 실행 후 수정 금지.
+> **사전등록 기록:** 아래 window는 `calibration/C-US/calibration_plan.md`에 실행 전 고정되었고, v1 및 v2 결과와 함께 보존된다. Freeze 이후 calibration window 수정은 금지된다.
 
 ### 5.1 사건 목록 + event-specific window (v3 — window 사전 고정)
 
 | 구분 | 사건 | 조합·모드 | stable window (P99용) | control / crisis window | 상태 |
 |---|---|---|---|---|---|
 | Positive | 2008 GFC | historical(재현 모드) **+ live(live rule)** | **2004-01 ~ 2006-12** (foundation Supp T18 상속) | control 2004-01-09~2006-06-30 / crisis 2005-01-05~2009-03-31 (foundation 상속) | **고정 ✓** |
-| Positive | 2020 COVID 신용충격 | live | `[TODO — 사전등록: 2019-09 repo spike를 stable에서 배제할 것]` | `[TODO — 사전등록]` | plan에서 고정 |
-| Positive | 2023 SVB | live 단독 | `[TODO — 사전등록: 2022 급격 긴축기(DFF \|Δ5d\| 상시 상승)의 stable 포함 여부를 명시적으로 결정·근거 기록]` | `[TODO — 사전등록]` | plan에서 고정 |
-| Negative | 2019 repo near-miss | historical + live | **2014-01 ~ 2018-12** (foundation Supp T10 상속) | control 2017~2018 / crisis 2019-01~2020-02 (foundation 상속) | **고정 ✓** |
-| Negative | quiet 구간 | live | `[TODO — §2.1 기준으로 사전등록]` | — (red episode 0건 확인용) | plan에서 고정 |
+| Positive | 2020 COVID 신용충격 | live | **2014-01-01 ~ 2018-12-31** | control **2017-01-01 ~ 2018-12-31** / crisis **2020-01-01 ~ 2020-06-30** | **고정 ✓** |
+| Positive | 2023 SVB | live 단독 | **2021-01-01 ~ 2021-12-31** | control **2021-01-01 ~ 2021-12-31** / crisis **2023-01-01 ~ 2023-06-30** | **고정 ✓** |
+| Negative | 2019 repo near-miss | historical + live | **2014-01 ~ 2018-12** (foundation Supp T10 상속) | control **2017-01 ~ 2018-12** / evaluation **2019-01 ~ 2020-02** (foundation 상속) | **고정 ✓** |
+| Negative | QUIET_2017 | live | **2014-01-01 ~ 2016-12-31** | control **2015-01-01 ~ 2016-12-31** / evaluation **2017-01-01 ~ 2017-12-31** | **고정 ✓** |
 
 **상속 원칙 (박제):** 2008·repo의 window는 foundation 논문에 **이미 공개된 값**을 그대로 상속 — window 선택이 튜닝 노브가 아님을 공개 이력으로 증명. 신규 사건(COVID·SVB·quiet)의 window는 calibration_plan commit으로 실행 전 고정.
 
@@ -137,28 +137,26 @@
 ### 5.3 TEDRATE ↔ CP–T-bill 정합성 (기록)
 중첩 구간(1997~2022-01)에서 두 spread의 상관 + 주요 스트레스 국면(2008·2020) 방향 일치를 문서화 — "기능적 후계" 주장의 실증 근거.
 
-## 6. Freeze 체크리스트 (v5)
+## 6. Freeze completion record (v5)
 
-```
-확정 완료:
-[✓] Ψ = DCPF3M − DTB3 (+배제 근거·sensitivity 단서)
-[✓] Ω live 정렬 = as-of LOCF (선형보간 금지) + historical 재현 모드 분리  ← v3
-[✓] 채널별 fill rule (일별 ≤5d / 주간 ≤14d)                           ← v3
-[✓] P99 이원화 (calibration event-specific / live frozen)              ← v3
-[✓] alert: w=90 거래일 / 2σ / 3σ / cooldown 10거래일 / horizon 6m
-[✓] outcome 임계 25% / 12% (+사전 확정 근거)
-[✓] outcome 소스 요구조건 분리
-[✓] calibration 사건 5개 중 2개(2008·repo)는 window까지 완전 고정        ← v3
+```text
+Freeze completed:
+[✓] common v4 + C-US frozen v5 specification recorded
+[✓] Ψ = DCPF3M − DTB3; Ω = as-of LOCF; channel-specific fill limits fixed
+[✓] calibration event windows fixed and v1/v2 audit results preserved
+[✓] LIVE_STABLE_WINDOW = 2024-01-01 ~ 2025-12-31
+[✓] LIVE_P99 = {rho: 0.25, psi: 0.1999999999999993, omega: 18958.8656}
+[✓] LIVE_MU_SIGMA = {mu: 0.03397769653160021, sigma: 0.038047420246019654}
+[✓] primary outcome = KBE; secondary market check = BKX if reproducible
+[✓] secondary FDIC threshold = reported total assets ≥ USD 10B
+[✓] no-lookahead and snapshot integrity tests passed
+[✓] python -m pytest -q = 44 passed
+[✓] freeze commit = 68731c6546ebd4845531aac03e1f3be198aab61a
+[✓] release tag = c-us-freeze-v1.0
 
-calibration 의존 (남은 전부):
-[ ] calibration_plan.md 작성 — COVID·SVB·quiet의 window 사전등록 → 실행 전 commit
-[ ] §2.1 live stable 기간 확정 (사전 기준 4개)
-[ ] §2.1 live P99 3개 숫자 박제 (live rule로 산출)
-[ ] §3 μ_control, σ_control 숫자 박제 (live rule로 산출)
-[ ] §4 primary 은행주 지수 소스 확정
-[ ] §4 FDIC $X 확정 (prior $10B, 분포 검증)
-[ ] §5 calibration 실행 → 전 결과 공개 → pass 확인
-[ ] no-lookahead 인과성 테스트 CI 통과 (common C12)
-[ ] 파이프라인 dry-run ≥ 7일
-→ 전부 ✓ → 이 파일 hash 고정 → freeze commit → C-US 시계 시작
+Post-freeze pending:
+[ ] first snapshot with snapshot_status = valid
+[ ] Zenodo archival and DOI recording
 ```
+
+The pending items do not alter the frozen analytical rule. DOI metadata will be added only after a DOI is issued.
