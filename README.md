@@ -2,6 +2,8 @@
 
 **Frozen prospective archive for the Π Structural Stability framework — C-US subtrack**
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21763166.svg)](https://doi.org/10.5281/zenodo.21763166)
+
 This repository is a prospective, versioned, append-only archive for the C-US financial stress subtrack.
 
 The archive is designed to freeze a diagnostic rule before future market outcomes occur, then record daily source data, computed stress values, alert summaries, metadata, and file hashes in chronological order. Its purpose is to make post-hoc rule fitting auditable and difficult: once frozen, the definitions, constants, alert rules, and outcome criteria are not changed in response to future events.
@@ -15,7 +17,9 @@ This repository is a research record. Nothing in this repository constitutes inv
 | Component                   | Status                                       |
 | --------------------------- | -------------------------------------------- |
 | C-US subtrack               | Frozen v1.0                                  |
-| Freeze date                  | 2026-08-03                                   |
+| Freeze date                 | 2026-08-03                                   |
+| Archived release            | `c-us-freeze-v1.0.2`                         |
+| Zenodo DOI                  | [`10.5281/zenodo.21763166`](https://doi.org/10.5281/zenodo.21763166) |
 | Prospective evidence status | Awaiting first valid snapshot                |
 | Current snapshots           | `dry_run` only                               |
 | Calibration                 | v1 and v2 records preserved                  |
@@ -502,9 +506,20 @@ Citation metadata is provided in:
 CITATION.cff
 ```
 
-Before the freeze release, cite the repository URL and commit hash.
+The frozen C-US archive release is permanently archived on Zenodo:
 
-After freeze, cite the release DOI once available.
+```text
+Release: c-us-freeze-v1.0.2
+DOI: 10.5281/zenodo.21763166
+```
+
+Preferred citation:
+
+```text
+Lee, Junwon. pi-prospective-archive: C-US Prospective Financial Stress Archive.
+Version c-us-freeze-v1.0.2. Zenodo.
+https://doi.org/10.5281/zenodo.21763166
+```
 
 When reusing snapshot data, preserve:
 
