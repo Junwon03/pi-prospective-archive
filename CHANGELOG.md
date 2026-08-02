@@ -4,6 +4,16 @@ All notable changes to the C-US prospective archive are documented here.
 
 This changelog is an audit-oriented summary. Full details are preserved in the repository history, calibration notes, SPEC files, snapshot metadata, and documentation files.
 
+## [c-us-freeze-v1.0.2] - 2026-08-03
+### Metadata
+
+- Corrected `CITATION.cff` to use a single valid SPDX license identifier for Zenodo ingestion.
+- Updated citation metadata version to `c-us-freeze-v1.0.2`.
+
+### Analytical Status
+
+- No changes to analytical logic, input data, estimands, frozen constants, alert rules, outcome definitions, snapshots, or numerical outputs.
+
 ## [c-us-freeze-v1.0.1] - 2026-08-03
 
 ### Documentation
